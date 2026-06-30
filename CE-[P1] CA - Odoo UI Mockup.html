@@ -1,0 +1,3291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP-425 — Account & Contact UI Mockup</title>
+<style>
+/* ============================================================
+   EXACT ODOO 17 DESIGN TOKENS (extracted from live instance)
+   Navbar bg:   #71639e  |  Body bg: #f8f9fa
+   Body color:  #212529  |  Tab inactive: #66598f
+   Tab label (notebook): #8f8f8f 13px
+   Form card:  white, border 1px solid #dee2e6, radius 4px
+   New button: #dee2e6 bg, dark text
+   Font:       system-ui / Segoe UI / Roboto stack, 14px
+   Line-height: 21px
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --o-navbar-bg:       #71639e;
+  --o-body-bg:         #f8f9fa;
+  --o-body-color:      #212529;
+  --o-body-font:       -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --o-body-size:       14px;
+  --o-border:          #dee2e6;
+  --o-card-bg:         #ffffff;
+  --o-card-radius:     4px;
+  --o-tab-inactive:    #66598f;
+  --o-tab-active-bg:   #ffffff;
+  --o-label-nb:        #8f8f8f;   /* notebook field labels */
+  --o-label-main:      #212529;   /* main form labels */
+  --o-placeholder:     #adb5bd;
+  --o-link:            #66598f;
+  --o-hr:              #dee2e6;
+  --o-section-title:   #212529;
+  --o-badge-in:        #198754;
+  --o-badge-in-bg:     #d1e7dd;
+  --o-badge-planned:   #6f42c1;
+  --o-badge-planned-bg:#e8d5ff;
+  --o-badge-std:       #495057;
+  --o-badge-std-bg:    #e9ecef;
+  --o-badge-req:       #dc3545;
+  --o-badge-req-bg:    #f8d7da;
+}
+
+body {
+  font-family: var(--o-body-font);
+  font-size: var(--o-body-size);
+  line-height: 21px;
+  color: var(--o-body-color);
+  background: var(--o-body-bg);
+}
+
+/* ========== TOPBAR (views switcher) ========== */
+.meta-topbar {
+  background: #1e1e2d;
+  color: #aaa;
+  font-size: 11px;
+  padding: 4px 16px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.meta-topbar button {
+  background: none; border: none; color: #aaa; padding: 2px 10px; cursor: pointer;
+  border-radius: 3px; font-size: 11px;
+}
+.meta-topbar button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.meta-topbar button.active { background: rgba(255,255,255,0.15); color: #fff; }
+.meta-topbar .sep { color: #444; }
+
+/* ========== ODOO MAIN NAVBAR ========== */
+.o_main_navbar {
+  background: var(--o-navbar-bg);
+  height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.o_main_navbar .o_menu_toggle {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.9); font-size: 18px; cursor: pointer; border-radius: 4px;
+}
+.o_main_navbar .o_menu_toggle:hover { background: rgba(255,255,255,0.12); }
+.o_navbar_app {
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 0 6px 0 8px;
+  cursor: pointer;
+}
+.o_navbar_submenu {
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+  padding: 0 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.o_navbar_submenu:hover { color: #fff; }
+.o_navbar_new_btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: rgba(255,255,255,0.9);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; margin-left: 2px;
+}
+.o_navbar_new_btn:hover { background: rgba(255,255,255,0.25); }
+.o_navbar_search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 8px;
+}
+.o_navbar_filter_pill {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: rgba(255,255,255,0.9);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+}
+.o_navbar_filter_pill:hover { background: rgba(255,255,255,0.2); }
+.o_searchbox {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  border-radius: 20px;
+  padding: 5px 14px 5px 34px;
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+  width: 220px;
+  outline: none;
+  position: relative;
+}
+.o_searchbox::placeholder { color: rgba(255,255,255,0.55); }
+.search_wrap { position: relative; }
+.search_wrap .s_icon {
+  position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  pointer-events: none;
+}
+.o_navbar_icons {
+  display: flex; align-items: center; gap: 2px; margin-left: 4px;
+}
+.o_navbar_icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.85); font-size: 16px; cursor: pointer;
+}
+.o_navbar_icon:hover { background: rgba(255,255,255,0.12); }
+.o_user_avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a90d9, #2ecc71);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 13px; cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+/* ========== CONTROL PANEL — single row with stat buttons ========== */
+.o_control_panel {
+  background: white;
+  border-bottom: 1px solid var(--o-border);
+  position: sticky;
+  top: 46px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 52px;
+  gap: 8px;
+}
+/* Action buttons (left) */
+.o_btn_new {
+  background: var(--o-border); border: 1px solid #c6cbcf;
+  color: var(--o-body-color); font-weight: 400; font-size: 13px;
+  padding: 4px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+.o_btn_new:hover { background: #cdd2d7; }
+/* Gear dropdown */
+.o_gear_wrap { position: relative; display: inline-flex; align-items: center; }
+.o_gear { color: #adb5bd; font-size: 14px; cursor: pointer; padding: 2px; border-radius: 3px; }
+.o_gear:hover { color: #495057; background: #f0f0f0; }
+.o_gear_menu {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; z-index: 2000;
+  background: #fff; border: 1px solid #dee2e6; border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13); min-width: 192px; padding: 4px 0;
+}
+.o_gear_menu.open { display: block; }
+.o_gear_divider { margin: 4px 0; border: none; border-top: 1px solid #dee2e6; }
+.o_gear_item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px; font-size: 13px; cursor: pointer;
+  color: var(--o-body-color); white-space: nowrap; user-select: none;
+}
+.o_gear_item:hover { background: #f8f9fa; }
+.o_gear_item.danger { color: #dc3545; }
+.o_gear_item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .75; }
+/* Dirty-state save/discard icons (show when form has unsaved changes) */
+.o_dirty_icons { display: none; align-items: center; gap: 1px; margin-left: 4px; }
+.o_dirty_icons.show { display: flex; }
+.o_dirty_btn {
+  background: none; border: 1px solid transparent; border-radius: 4px;
+  padding: 3px 6px; cursor: pointer; color: #495057; line-height: 1;
+  display: inline-flex; align-items: center; transition: background .1s;
+}
+.o_dirty_btn:hover { background: #f0f0f0; border-color: #ced4da; }
+.o_dirty_btn svg { width: 15px; height: 15px; }
+.o_dirty_btn.save svg { color: #71639e; }
+.o_dirty_btn.discard svg { color: #adb5bd; }
+/* Breadcrumb */
+.o_breadcrumb {
+  display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-right: 4px;
+}
+.o_back_btn {
+  color: var(--o-tab-inactive); font-size: 13px; font-weight: 400;
+  background: none; border: none; cursor: pointer; padding: 2px 4px;
+  border-radius: 3px; line-height: 1.4; white-space: nowrap;
+}
+.o_back_btn:hover { background: var(--o-body-bg); }
+.o_sep { color: #adb5bd; font-size: 13px; padding: 0 2px; }
+.o_current_page { font-size: 13px; font-weight: 600; color: var(--o-body-color); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* Stat buttons — inline in CP */
+.o_cp_stats {
+  display: flex; align-items: stretch; height: 100%; overflow-x: auto; flex: 1;
+  border-left: 1px solid var(--o-border); border-right: 1px solid var(--o-border);
+  margin: 0 4px;
+}
+.o_stat_button {
+  display: flex; align-items: center; gap: 7px;
+  padding: 4px 14px;
+  border: none; border-right: 1px solid var(--o-border);
+  cursor: pointer; background: none;
+  text-decoration: none; color: var(--o-body-color);
+  white-space: nowrap;
+}
+.o_stat_button:hover { background: var(--o-body-bg); }
+.o_stat_icon { display: flex; align-items: center; color: var(--o-navbar-bg); flex-shrink: 0; }
+.o_stat_icon svg { width: 16px; height: 16px; fill: currentColor; }
+.o_stat_info { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.3; }
+.o_stat_value { font-weight: 700; font-size: 13px; color: var(--o-navbar-bg); }
+.o_stat_text { font-size: 11px; color: #6c757d; }
+/* ── Pipeline status bar (Odoo Sales Order style) ── */
+.o_pipeline_bar {
+  display: flex; align-items: stretch; flex-shrink: 0;
+  border: 1px solid var(--o-border); border-radius: 4px; overflow: hidden;
+}
+.o_pipe_item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 18px 5px 22px; font-size: 13px; white-space: nowrap;
+  background: none; border: none; cursor: pointer; font: inherit;
+  color: #adb5bd; position: relative;
+}
+.o_pipe_item:first-child { padding-left: 14px; }
+/* right-pointing arrow separator */
+.o_pipe_item:not(:last-child)::after {
+  content: ''; position: absolute; right: -10px; top: 0; z-index: 2;
+  width: 0; height: 0;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 10px solid #e9ecef;
+}
+.o_pipe_item + .o_pipe_item { border-left: 1px solid var(--o-border); }
+.o_pipe_item.done {
+  background: #f0ecfc; color: #71639e;
+}
+.o_pipe_item.done::after { border-left-color: #f0ecfc; }
+.o_pipe_item.active {
+  background: #71639e; color: #fff; font-weight: 600;
+}
+.o_pipe_item.active::after { border-left-color: #71639e; }
+.o_pipe_item.active + .o_pipe_item { border-left-color: #71639e; }
+/* Legacy small statusbar (kept for updateStatusBar compat — hidden) */
+.o_statusbar_status { display: none; }
+.o_status_item { font-size: 12px; padding: 2px 10px; color: #adb5bd; }
+.o_status_item.done { color: var(--o-tab-inactive); }
+.o_status_item.active { color: var(--o-body-color); font-weight: 700; }
+.o_status_sep { color: #ced4da; font-size: 11px; }
+/* Pager */
+.o_pager { display: flex; align-items: center; gap: 2px; font-size: 13px; color: #6c757d; flex-shrink: 0; }
+.o_pager_btn {
+  width: 24px; height: 24px; border-radius: 4px;
+  border: 1px solid var(--o-border); background: white;
+  cursor: pointer; font-size: 12px; color: #6c757d;
+  display: flex; align-items: center; justify-content: center;
+}
+.o_pager_btn:hover { background: var(--o-body-bg); }
+.o_pager_value { padding: 0 4px; }
+
+/* ========== CHATTER ========== */
+.o_chatter {
+  width: 360px; flex-shrink: 0;
+  border-left: 1px solid var(--o-border);
+  background: white;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.o_chatter_topbar {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--o-border);
+  display: flex; gap: 6px; align-items: center; flex-shrink: 0;
+}
+.o_chatter_topbar .o_cp_icon_btns { margin-left: auto; display: flex; gap: 2px; }
+.o_chatter_topbar .o_icon_btn {
+  width: 30px; height: 30px; border-radius: 4px;
+  border: 1px solid transparent; background: none;
+  color: #6c757d; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.o_chatter_topbar .o_icon_btn:hover { background: var(--o-body-bg); border-color: var(--o-border); }
+.o_chat_btn {
+  font-size: 13px; padding: 4px 10px; border-radius: 4px; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+}
+.o_chat_btn.primary { background: var(--o-body-color); color: white; border: 1px solid var(--o-body-color); }
+.o_chat_btn.primary:hover { background: #343a40; }
+.o_chat_btn.secondary { background: none; color: var(--o-body-color); border: 1px solid var(--o-border); }
+.o_chat_btn.secondary:hover { background: var(--o-body-bg); }
+.o_chatter_thread { flex: 1; overflow-y: auto; padding: 12px 14px; }
+.o_date_separator {
+  text-align: center; font-size: 11px; color: #adb5bd;
+  margin: 8px 0; position: relative;
+}
+.o_date_separator::before, .o_date_separator::after {
+  content: ''; position: absolute; top: 50%;
+  width: 38%; height: 1px; background: var(--o-border);
+}
+.o_date_separator::before { left: 0; }
+.o_date_separator::after { right: 0; }
+.o_message { display: flex; gap: 10px; margin-bottom: 16px; }
+.o_msg_avatar {
+  width: 36px; height: 36px; border-radius: 4px;
+  background: #5b7ea3; color: white; font-weight: 700; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.o_msg_body { flex: 1; }
+.o_msg_header { font-size: 13px; margin-bottom: 2px; }
+.o_msg_author { font-weight: 700; color: var(--o-body-color); }
+.o_msg_date { color: #adb5bd; font-size: 11px; margin-left: 6px; }
+.o_msg_content { font-size: 13px; color: #495057; }
+
+/* ========== FORM VIEW ========== */
+.o_form_view {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+.o_form_sheet_bg { max-width: 1100px; margin: 0 auto; }
+
+/* Status bar */
+
+
+/* Form sheet card */
+.o_form_sheet {
+  background: white;
+  border: 1px solid var(--o-border);
+  border-radius: var(--o-card-radius);
+  overflow: visible;
+}
+
+/* Header (avatar + name) */
+.o_form_header {
+  display: flex;
+  gap: 20px;
+  padding: 20px 24px 16px;
+  align-items: flex-start;
+}
+.o_avatar_box {
+  width: 130px; height: 130px; flex-shrink: 0;
+  border: 1px solid var(--o-border); border-radius: 4px;
+  background: #e9ecef;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.o_avatar_placeholder {
+  width: 100%; height: 100%;
+  background: #71639e22;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; color: var(--o-navbar-bg); font-weight: 700;
+}
+.o_form_header_info { flex: 1; padding-top: 4px; }
+.o_person_company_toggle {
+  display: flex; gap: 16px; align-items: center; margin-bottom: 8px; font-size: 13px;
+}
+.o_radio_item { display: flex; align-items: center; gap: 5px; cursor: pointer; color: #6c757d; }
+.o_radio_item input[type=radio] { accent-color: var(--o-navbar-bg); }
+.o_radio_item.selected { color: var(--o-body-color); }
+.o_company_name {
+  font-size: 24px; font-weight: 500; color: var(--o-body-color);
+  border: none; outline: none; width: 100%; background: transparent;
+  padding: 2px 0; margin-bottom: 8px;
+}
+.o_contact_inline {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.o_contact_line {
+  display: flex; align-items: center; gap: 8px; font-size: 14px;
+  color: var(--o-tab-inactive);
+}
+.o_contact_line .o_icon { font-size: 14px; width: 18px; text-align: center; }
+.o_contact_line input {
+  border: none; outline: none; background: transparent;
+  color: var(--o-tab-inactive); font-size: 14px; flex: 1;
+}
+.o_contact_line input::placeholder { color: var(--o-placeholder); }
+
+/* Main form fields — 2-column layout */
+.o_field_rows {
+  padding: 0 24px 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 32px;
+  border-top: 1px solid var(--o-border);
+}
+.o_field_row {
+  display: grid; grid-template-columns: 150px 1fr auto;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0f1f3;
+  gap: 0 8px;
+}
+.o_field_row.span-full {
+  grid-column: 1 / -1;
+  grid-template-columns: 150px 1fr auto;
+}
+.o_field_row:last-child { border-bottom: none; }
+.o_field_badges { display: flex; gap: 3px; flex-shrink: 0; }
+.o_form_label {
+  color: var(--o-label-main); font-weight: 500; font-size: 14px;
+  padding-right: 12px; display: flex; align-items: center; gap: 4px;
+}
+.o_help { color: var(--o-placeholder); font-size: 11px; cursor: help; }
+.o_field_value {
+  font-size: 14px; color: var(--o-body-color);
+}
+.o_field_value input, .o_field_value select {
+  border: none; outline: none; background: transparent;
+  font-size: 14px; color: var(--o-body-color); width: 100%;
+  font-family: var(--o-body-font);
+}
+.o_field_value input::placeholder, .o_field_value select option[disabled] { color: var(--o-placeholder); }
+.o_field_value .o_placeholder { color: var(--o-placeholder); }
+.o_field_value select { cursor: pointer; }
+.o_field_value .o_tag {
+  display: inline-flex; align-items: center;
+  background: #e8d5ff; color: var(--o-badge-planned);
+  padding: 2px 8px; border-radius: 10px; font-size: 12px; margin: 1px;
+}
+.o_field_value .o_tag_green {
+  display: inline-flex; align-items: center;
+  background: #d1e7dd; color: var(--o-badge-in);
+  padding: 2px 8px; border-radius: 10px; font-size: 12px; margin: 1px;
+}
+
+/* ========== NOTEBOOK (TABS) ========== */
+.o_notebook { margin-top: 8px; }
+.o_notebook .nav-tabs {
+  display: flex; gap: 0; background: white;
+  border-bottom: 1px solid var(--o-border);
+  padding: 0 16px;
+  overflow-x: auto;
+}
+.o_notebook .nav-link {
+  color: var(--o-tab-inactive); font-size: 14px; font-weight: 400;
+  padding: 8px 16px; border: 1px solid transparent; border-bottom: none;
+  cursor: pointer; white-space: nowrap; background: none; text-decoration: none;
+  display: block; border-top-left-radius: 4px; border-top-right-radius: 4px;
+}
+.o_notebook .nav-link:hover { color: #4b3f7a; }
+.o_notebook .nav-link.active {
+  color: #000; background: white; font-weight: 400;
+  border-color: var(--o-border) var(--o-border) white;
+  margin-bottom: -1px;
+}
+
+/* Tab content */
+.o_tab_content { display: none; padding: 20px 24px; }
+.o_tab_content.active { display: block; }
+
+/* Section separator */
+.o_horizontal_separator {
+  font-size: 14px; font-weight: 700; color: var(--o-section-title);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--o-hr);
+  margin-bottom: 14px;
+  margin-top: 4px;
+}
+.o_horizontal_separator:not(:first-child) { margin-top: 20px; }
+
+/* Notebook field rows */
+.o_nb_row {
+  display: grid; grid-template-columns: 180px 1fr;
+  align-items: baseline;
+  min-height: 32px;
+  margin-bottom: 2px;
+}
+.o_nb_row.cols-2 { grid-template-columns: 1fr 1fr; gap: 0 40px; }
+.o_nb_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; margin-bottom: 4px; }
+.o_nb_label {
+  color: var(--o-label-nb); font-size: 13px; font-weight: 400;
+  padding: 4px 8px 4px 0;
+  display: flex; align-items: flex-start; gap: 3px; line-height: 20px;
+}
+.o_nb_value {
+  font-size: 14px; color: var(--o-body-color);
+  padding: 4px 0;
+}
+.o_nb_value input, .o_nb_value select {
+  border: none; outline: none; background: transparent;
+  font-size: 14px; color: var(--o-body-color); width: 100%;
+  font-family: var(--o-body-font);
+}
+.o_nb_value input::placeholder { color: var(--o-placeholder); }
+.o_nb_value .o_readonly {
+  color: var(--o-body-color);
+}
+.o_nb_value .o_placeholder { color: var(--o-placeholder); }
+.o_nb_value .o_checkbox_row { display: flex; align-items: center; gap: 6px; }
+.o_nb_value .o_checkbox_row input[type=checkbox] { accent-color: var(--o-navbar-bg); width: 14px; height: 14px; }
+
+/* ========== BADGES (design spec markers) ========== */
+.b {
+  display: inline-flex; align-items: center;
+  font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+  letter-spacing: 0.3px; margin-left: 3px; vertical-align: middle;
+  flex-shrink: 0;
+}
+.b-in  { color: var(--o-badge-in);      background: var(--o-badge-in-bg);     border: 1px solid #a3cfbb; }
+.b-pl  { color: var(--o-badge-planned);  background: var(--o-badge-planned-bg); border: 1px solid #c7a3e8; }
+.b-std { color: var(--o-badge-std);      background: var(--o-badge-std-bg);     border: 1px solid #ced4da; }
+.b-req { color: var(--o-badge-req);      background: var(--o-badge-req-bg);     border: 1px solid #f1aeb5; }
+
+/* ========== FLOWS VIEW ========== */
+.o_flows_wrap { padding: 16px; max-width: 1100px; margin: 0 auto; }
+.o_flows_heading { font-size: 18px; font-weight: 700; color: var(--o-body-color); margin-bottom: 4px; }
+.o_flows_sub { font-size: 13px; color: #6c757d; margin-bottom: 16px; }
+
+.flows_legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; font-size: 12px; color: #6c757d; }
+.flows_legend span { display: flex; align-items: center; gap: 5px; }
+.fc { font-family: monospace; font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.fc-z   { background: var(--o-badge-in-bg);     color: var(--o-badge-in);     border: 1px solid #a3cfbb; }
+.fc-x   { background: var(--o-badge-planned-bg); color: var(--o-badge-planned); border: 1px solid #c7a3e8; }
+.fc-std { background: var(--o-badge-std-bg);    color: var(--o-badge-std);    border: 1px solid #ced4da; }
+
+.flows_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.flow_card {
+  background: white; border: 1px solid var(--o-border); border-radius: var(--o-card-radius);
+  overflow: hidden;
+}
+.flow_card_head {
+  padding: 12px 16px; color: white;
+  display: flex; align-items: center; gap: 10px;
+}
+.flow_card_head .fnum { font-size: 11px; opacity: 0.8; font-weight: 600; letter-spacing: 0.5px; }
+.flow_card_head .ftitle { font-size: 15px; font-weight: 700; }
+.flow_card_head .ficon { margin-left: auto; font-size: 18px; }
+.flow_steps { padding: 14px 16px; }
+.flow_step { display: flex; gap: 10px; margin-bottom: 14px; }
+.flow_step:last-child { margin-bottom: 0; }
+.step_dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.step_body { flex: 1; }
+.step_title { font-size: 13px; font-weight: 600; color: var(--o-body-color); margin-bottom: 5px; }
+.step_fields { display: flex; flex-wrap: wrap; gap: 3px; }
+.auto_note {
+  background: #fff9e6; border: 1px solid #ffd666; border-radius: 3px;
+  padding: 5px 8px; margin-top: 6px; font-size: 11px; color: #7c5900;
+  display: flex; gap: 5px; align-items: flex-start;
+}
+
+/* ========== VIEW CONTAINERS ========== */
+.view { display: none; }
+.view.active { display: block; }
+.view-form { display: none; flex-direction: column; height: calc(100vh - 46px - 28px); overflow: hidden; }
+.view-form.active { display: flex; }
+
+/* Body row: form (flex:1) + chatter (fixed ~360px) */
+.o_body_row { flex: 1; display: flex; flex-direction: row; overflow: hidden; }
+/* scrollable form area */
+.o_form_scroll { flex: 1; overflow-y: auto; }
+
+/* ========== CONTACTS LIST VIEW (ERP-433) ========== */
+.o_contacts_toolbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; border-bottom: 1px solid var(--o-border); background: white;
+}
+.o_sf_sync_note {
+  font-size: 11px; color: #6c757d; display: flex; align-items: center; gap: 5px;
+  background: #e8f4ff; border: 1px solid #b8d9f7; border-radius: 4px;
+  padding: 3px 10px;
+}
+.o_contacts_group {
+  border-bottom: 1px solid var(--o-border);
+}
+.o_contacts_group_header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; cursor: pointer; background: #fafbfc;
+  font-size: 12px; font-weight: 700; color: #495057;
+  user-select: none;
+}
+.o_contacts_group_header:hover { background: #f0f1f3; }
+.o_contacts_group_body { background: white; }
+.o_contacts_list_table {
+  width: 100%; border-collapse: collapse; font-size: 12.5px;
+}
+.o_contacts_list_table thead tr { border-bottom: 1px solid #eef0f2; }
+.o_contacts_list_table th {
+  padding: 6px 12px; font-size: 11px; font-weight: 700; color: #6c757d;
+  text-align: left; text-transform: uppercase; letter-spacing: .3px; background: #f8f9fa;
+}
+.o_cl_row td { padding: 8px 12px; border-bottom: 1px solid #f5f6f7; vertical-align: middle; }
+.o_cl_row:hover td { background: #f8f9fa; }
+.o_cl_primary td { background: #fdfcff; }
+.o_cl_name_cell { display: flex; align-items: center; gap: 7px; }
+.o_cl_link { color: var(--o-body-color); cursor: pointer; }
+.o_cl_link:hover { color: var(--o-navbar-bg); text-decoration: underline; }
+.o_cl_muted { color: #6c757d; }
+.o_sf_badge {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 700;
+  color: #1565c0; background: #e3f0ff; border: 1px solid #b8d4f5;
+}
+.o_cl_action_btn {
+  background: none; border: none; cursor: pointer; color: #adb5bd;
+  font-size: 16px; padding: 0 4px; border-radius: 3px;
+}
+.o_cl_action_btn:hover { background: var(--o-body-bg); color: var(--o-body-color); }
+.o_cl_add_row td { padding: 6px 12px; }
+.o_cl_add_inline {
+  background: none; border: none; cursor: pointer; color: var(--o-tab-inactive);
+  font-size: 12px; padding: 2px 4px; border-radius: 3px;
+}
+.o_cl_add_inline:hover { background: #f0f1f3; color: var(--o-navbar-bg); }
+.o_primary_badge {
+  font-size: 9px; padding: 1px 6px; border-radius: 10px; font-weight: 700;
+  color: #198754; background: #d1e7dd; border: 1px solid #a3cfbb;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+
+/* ========== CONTACT CARDS ========== */
+.o_contact_cards { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px; }
+.o_contact_card {
+  width: 210px; border: 1px solid var(--o-border); border-radius: 6px;
+  padding: 16px 12px 12px; display: flex; flex-direction: column; align-items: center;
+  gap: 7px; cursor: pointer; background: white;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.o_contact_card:hover { border-color: var(--o-navbar-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.o_card_avatar {
+  width: 54px; height: 54px; border-radius: 6px;
+  color: white; font-weight: 700; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+.o_card_name { font-size: 13px; font-weight: 600; color: var(--o-body-color); text-align: center; line-height: 1.3; }
+.o_card_role { font-size: 12px; color: #6c757d; text-align: center; }
+.o_card_email { font-size: 11px; color: var(--o-tab-inactive); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+.o_card_primary {
+  font-size: 10px; font-weight: 700; color: var(--o-badge-in);
+  background: var(--o-badge-in-bg); border: 1px solid #a3cfbb;
+  padding: 1px 8px; border-radius: 10px;
+}
+.o_contact_add_card {
+  width: 210px; height: 128px; border: 2px dashed #ced4da; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; cursor: pointer; background: none; color: #adb5bd;
+  font-size: 13px; transition: border-color 0.15s, color 0.15s;
+}
+.o_contact_add_card:hover { border-color: var(--o-navbar-bg); color: var(--o-navbar-bg); }
+.o_contact_add_card .add_icon { font-size: 22px; line-height: 1; }
+
+/* ========== CONTACTS TAB — SUB-SECTIONS ========== */
+.o_contacts_section {
+  border: 1px solid var(--o-border);
+  border-radius: var(--o-card-radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.o_contacts_section_header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--o-border);
+  cursor: pointer;
+  user-select: none;
+}
+.o_contacts_section_header:hover { background: #f0f1f3; }
+.o_section_arrow { font-size: 12px; color: #6c757d; width: 12px; transition: transform 0.15s; }
+.o_section_label { font-weight: 600; font-size: 13px; color: var(--o-body-color); }
+.o_section_count {
+  background: var(--o-navbar-bg); color: white;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 10px; min-width: 20px; text-align: center;
+}
+.o_section_count:empty, .o_section_count[data-count="0"] { background: #adb5bd; }
+.o_add_contact_btn {
+  margin-left: auto;
+  background: none; border: 1px solid var(--o-border);
+  color: var(--o-tab-inactive); font-size: 12px; font-weight: 500;
+  padding: 2px 10px; border-radius: 4px; cursor: pointer;
+}
+.o_add_contact_btn:hover { background: white; color: var(--o-navbar-bg); border-color: var(--o-navbar-bg); }
+
+.o_contacts_section_body { background: white; }
+.o_contacts_table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.o_contacts_table thead tr {
+  background: #f8f9fa; border-bottom: 1px solid var(--o-border);
+}
+.o_contacts_table th {
+  padding: 7px 14px; text-align: left;
+  font-size: 11px; font-weight: 700; color: #6c757d;
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
+.o_contacts_table td {
+  padding: 9px 14px; border-bottom: 1px solid #f0f1f3;
+  vertical-align: middle;
+}
+.o_contacts_table tbody tr:last-child td { border-bottom: none; }
+.o_contacts_table tbody tr:hover { background: #fafafa; }
+
+.o_contact_avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  color: white; font-weight: 700; font-size: 11px;
+  margin-right: 8px; vertical-align: middle; flex-shrink: 0;
+}
+.o_contact_name { font-weight: 500; color: var(--o-body-color); vertical-align: middle; }
+.o_primary_badge {
+  font-size: 10px; font-weight: 700; color: var(--o-badge-in);
+  background: var(--o-badge-in-bg); border: 1px solid #a3cfbb;
+  padding: 1px 6px; border-radius: 10px; margin-left: 6px; vertical-align: middle;
+}
+.o_link { color: var(--o-tab-inactive); text-decoration: none; font-size: 13px; }
+.o_link:hover { text-decoration: underline; }
+.o_row_action {
+  background: none; border: none; color: #adb5bd; cursor: pointer;
+  font-size: 14px; padding: 2px 6px; border-radius: 3px;
+}
+.o_row_action:hover { background: var(--o-body-bg); color: var(--o-tab-inactive); }
+.o_empty_row { text-align: center; color: #adb5bd; font-size: 12px; padding: 16px !important; font-style: italic; }
+
+/* ========== FLOW WIZARD MODAL ========== */
+.o_wizard_overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
+}
+.o_wizard_overlay.open { display: flex; }
+.o_wizard_dialog {
+  background: white; border-radius: 8px; width: 680px; max-width: 96vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22); overflow: hidden;
+}
+.o_wizard_header {
+  background: var(--o-navbar-bg); color: white;
+  padding: 18px 24px 14px;
+}
+.o_wizard_header h2 { font-size: 17px; font-weight: 700; margin: 0 0 3px; }
+.o_wizard_header p  { font-size: 13px; margin: 0; opacity: 0.85; }
+.o_wizard_body { padding: 20px 24px 24px; }
+.o_wizard_grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+}
+.o_flow_card {
+  border: 2px solid var(--o-border); border-radius: 6px;
+  padding: 16px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.o_flow_card:hover { border-color: var(--o-navbar-bg); box-shadow: 0 2px 10px rgba(113,99,158,0.18); }
+.o_flow_card.selected { border-color: var(--o-navbar-bg); background: #f4f2fb; }
+.o_flow_icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; margin-bottom: 2px;
+}
+.o_flow_title { font-size: 14px; font-weight: 700; color: var(--o-body-color); }
+.o_flow_desc  { font-size: 12px; color: #6c757d; line-height: 1.45; }
+.o_flow_fields {
+  margin-top: 4px; font-size: 11px; color: var(--o-tab-inactive);
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.o_flow_field_chip {
+  background: #f0edf8; border: 1px solid #d5cef0;
+  padding: 1px 7px; border-radius: 10px; font-size: 11px; color: var(--o-tab-inactive);
+}
+.o_wizard_footer { display: flex; justify-content: flex-end; gap: 8px; }
+.o_wizard_cancel {
+  background: none; border: 1px solid var(--o-border);
+  color: var(--o-body-color); font-size: 13px; padding: 6px 16px; border-radius: 4px; cursor: pointer;
+}
+.o_wizard_cancel:hover { background: var(--o-body-bg); }
+.o_wizard_start {
+  background: var(--o-navbar-bg); border: 1px solid #5e5184;
+  color: white; font-size: 13px; font-weight: 600; padding: 6px 18px; border-radius: 4px; cursor: pointer;
+  opacity: 0.4; pointer-events: none; transition: opacity 0.15s;
+}
+.o_wizard_start.ready { opacity: 1; pointer-events: auto; }
+.o_wizard_start.ready:hover { background: #5e5184; }
+/* ========== WIZARD STEP SCREEN ========== */
+.o_wizard_dialog { width: 720px; }
+.o_wiz_step_hdr { padding: 18px 24px 14px; color: white; }
+.o_wiz_step_hdr h2 { font-size: 17px; font-weight: 700; margin: 0 0 2px; }
+.o_wiz_step_hdr p  { font-size: 12px; margin: 0; opacity: .8; }
+
+/* Progress bar */
+.o_wiz_progress {
+  display: flex; align-items: center; padding: 14px 24px 12px;
+  background: #f9f8fd; border-bottom: 1px solid var(--o-border); gap: 0;
+}
+.o_wiz_prog_step {
+  display: flex; align-items: center; gap: 6px; flex: 1;
+}
+.o_wiz_prog_step:last-child { flex: none; }
+.o_wiz_prog_circle {
+  width: 26px; height: 26px; border-radius: 50%; border: 2px solid #dee2e6;
+  background: white; color: #adb5bd; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.o_wiz_prog_step.done .o_wiz_prog_circle  { background: #198754; border-color: #198754; color: white; }
+.o_wiz_prog_step.active .o_wiz_prog_circle { background: var(--step-color); border-color: var(--step-color); color: white; }
+.o_wiz_prog_label {
+  font-size: 11px; font-weight: 600; color: #adb5bd; white-space: nowrap;
+}
+.o_wiz_prog_step.done .o_wiz_prog_label  { color: #198754; }
+.o_wiz_prog_step.active .o_wiz_prog_label { color: var(--step-color); }
+.o_wiz_prog_line {
+  flex: 1; height: 2px; background: #dee2e6; margin: 0 6px;
+}
+.o_wiz_prog_line.done { background: #a3cfbb; }
+
+/* Step body */
+.o_wiz_step_body { padding: 20px 24px 16px; min-height: 180px; }
+.o_wiz_form_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+.o_wiz_form_grid.single { grid-template-columns: 1fr; }
+.o_wiz_field { display: flex; flex-direction: column; gap: 4px; }
+.o_wiz_field.full { grid-column: 1 / -1; }
+.o_wiz_field label {
+  font-size: 12px; font-weight: 600; color: #495057;
+}
+.o_wiz_field label .req { color: #e53935; margin-left: 2px; }
+.o_wiz_field input, .o_wiz_field select {
+  border: 1.5px solid #ced4da; border-radius: 4px;
+  padding: 7px 10px; font-size: 13px; color: var(--o-body-color);
+  background: white; outline: none; width: 100%; box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.o_wiz_field input:focus, .o_wiz_field select:focus { border-color: var(--o-navbar-bg); }
+.o_wiz_field input::placeholder { color: #adb5bd; }
+.o_wiz_field .o_wiz_hint { font-size: 11px; color: #6c757d; margin-top: 2px; }
+
+/* Review step */
+.o_wiz_review { }
+.o_wiz_review_section { margin-bottom: 14px; }
+.o_wiz_review_section h4 {
+  font-size: 11px; font-weight: 700; color: #6c757d; text-transform: uppercase;
+  letter-spacing: 0.5px; margin: 0 0 8px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--o-border);
+}
+.o_wiz_review_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+.o_wiz_review_row { display: flex; gap: 8px; align-items: baseline; font-size: 12px; }
+.o_wiz_review_label { color: #6c757d; flex-shrink: 0; min-width: 120px; }
+.o_wiz_review_val { font-weight: 600; color: var(--o-body-color); }
+.o_wiz_review_empty { color: #adb5bd; font-style: italic; font-weight: 400; }
+
+/* Footer */
+.o_wiz_step_footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 24px; border-top: 1px solid var(--o-border); background: #f9f8fd;
+}
+.o_wiz_btn_secondary {
+  background: none; border: 1px solid var(--o-border); color: #6c757d;
+  font-size: 13px; padding: 6px 14px; border-radius: 4px; cursor: pointer;
+}
+.o_wiz_btn_secondary:hover { background: #f0edf8; border-color: var(--o-navbar-bg); color: var(--o-navbar-bg); }
+.o_wiz_btn_primary {
+  background: var(--o-navbar-bg); border: 1px solid #5e5184;
+  color: white; font-size: 13px; font-weight: 600; padding: 7px 20px;
+  border-radius: 4px; cursor: pointer; transition: background 0.15s;
+}
+.o_wiz_btn_primary:hover { background: #5e5184; }
+.o_wiz_btn_success {
+  background: #198754; border: 1px solid #157347;
+  color: white; font-size: 13px; font-weight: 600; padding: 7px 20px;
+  border-radius: 4px; cursor: pointer;
+}
+.o_wiz_btn_success:hover { background: #157347; }
+
+/* Hide guide bar permanently */
+#flowGuide { display: none !important; }
+
+/* ========== FLOW GUIDE BAR ========== */
+.o_flow_guide {
+  border-bottom: 2px solid var(--o-border);
+  background: #f8f7fc;
+}
+.o_guide_top {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+}
+.o_guide_badge {
+  font-size: 11px; font-weight: 700; padding: 4px 13px; border-radius: 10px;
+  color: white; white-space: nowrap; flex-shrink: 0;
+}
+.o_guide_steps { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+
+.o_guide_step {
+  display: flex; align-items: center; gap: 6px;
+  border: 1.5px solid #dee2e6; background: white; border-radius: 20px;
+  padding: 5px 14px 5px 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+  color: #6c757d; transition: border-color 0.15s, background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.o_guide_step:hover { border-color: #adb5bd; color: #495057; background: #f8f9fa; }
+.o_guide_step.active {
+  border-color: var(--guide-color, #71639e);
+  background: var(--guide-bg, #f4f2fb);
+  color: var(--guide-color, #71639e);
+}
+.o_guide_step.done { border-color: #a3cfbb; background: #f0faf4; color: #198754; }
+.o_guide_step_num {
+  width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: #dee2e6; color: #6c757d;
+}
+.o_guide_step.active .o_guide_step_num { background: var(--guide-color, #71639e); color: white; }
+.o_guide_step.done  .o_guide_step_num  { background: #198754; color: white; }
+.o_guide_step_label { white-space: nowrap; }
+
+.o_guide_close {
+  background: none; border: none; color: #adb5bd; font-size: 15px;
+  cursor: pointer; padding: 2px 4px; flex-shrink: 0; line-height: 1;
+}
+.o_guide_close:hover { color: #495057; }
+
+/* Detail panel (expands below when step is active) */
+.o_guide_detail { display: none; padding: 8px 16px 12px; border-top: 1px solid #ede9f8; }
+.o_guide_detail.open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.o_guide_detail_hint { font-size: 12px; color: #6c757d; flex: 1; min-width: 200px; }
+.o_guide_detail_chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.o_guide_field_chip {
+  background: white; border: 1px solid #d5cef0; border-radius: 10px;
+  padding: 2px 10px; font-size: 11px; color: var(--o-tab-inactive);
+}
+.o_guide_tab_chip {
+  font-size: 11px; color: white; padding: 3px 10px; border-radius: 10px;
+  font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+}
+
+/* ========== FLOW INDICATOR BANNER ========== */
+.o_flow_banner {
+  display: none; flex-direction: column; gap: 8px;
+  padding: 10px 16px 12px;
+  border-bottom: 2px solid var(--o-border);
+  background: #f7f5fd;
+}
+.o_flow_banner.visible { display: flex; }
+
+.o_flow_banner_top { display: flex; align-items: center; gap: 10px; }
+.o_flow_badge {
+  font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 10px;
+  color: white; white-space: nowrap; flex-shrink: 0;
+}
+.o_flow_banner_title { font-size: 13px; font-weight: 700; color: var(--o-body-color); flex: 1; }
+.o_flow_banner_hint  { font-size: 12px; color: #6c757d; margin-left: 2px; }
+.o_flow_progress { display: flex; align-items: center; gap: 4px; margin-left: auto; flex-shrink: 0; }
+.o_progress_dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #dee2e6;
+  transition: background 0.2s;
+}
+.o_progress_dot.active  { background: var(--flow-color, #71639e); }
+.o_progress_dot.done    { background: #adb5bd; }
+
+.o_flow_banner_bottom { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.o_flow_req_chip {
+  background: white; border: 1px solid #d5cef0; border-radius: 10px;
+  padding: 2px 10px; font-size: 11px; color: var(--o-tab-inactive);
+  transition: border-color 0.2s, background 0.2s;
+}
+.o_flow_req_chip.completed { background: #e8f5e9; border-color: #a3cfbb; color: #2e7d32; }
+.o_flow_tab_hint {
+  font-size: 11px; color: white; padding: 2px 10px; border-radius: 10px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.o_flow_banner_actions { display: flex; gap: 6px; margin-left: auto; }
+.o_flow_next_btn {
+  font-size: 12px; padding: 3px 12px; border-radius: 4px;
+  color: white; border: none; cursor: pointer; font-weight: 600;
+}
+.o_flow_next_btn:hover { opacity: 0.88; }
+.o_flow_dismiss {
+  background: none; border: 1px solid var(--o-border); color: #6c757d; font-size: 12px;
+  padding: 3px 10px; border-radius: 4px; cursor: pointer;
+}
+.o_flow_dismiss:hover { background: var(--o-border); }
+
+/* Field-level step highlighting */
+.o_field_row { position: relative; }
+.o_field_row.flow-active {
+  background: rgba(113,99,158,0.05);
+  border-left: 3px solid var(--flow-color, #71639e);
+  margin-left: -3px; padding-left: 5px;
+  border-radius: 0 3px 3px 0;
+  transition: background 0.2s;
+}
+.o_field_row.flow-active .o_form_label { font-weight: 700; }
+.o_step_num {
+  position: absolute; left: -22px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; border-radius: 50%; font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; color: white;
+}
+
+/* Tab pulse when step requires a tab switch */
+.nav-link.flow-tab-hint {
+  animation: tabPulse 1.5s ease-in-out infinite;
+}
+@keyframes tabPulse {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 3px rgba(113,99,158,0.35); border-radius: 4px; }
+}
+
+/* Company name highlight */
+.o_company_name.flow-active {
+  border-color: var(--flow-color, #71639e);
+  box-shadow: 0 0 0 2px rgba(113,99,158,0.15);
+}
+
+/* ========== HIERARCHY VIEW ========== */
+.o_hierarchy_cp {
+  background: white; border-bottom: 1px solid var(--o-border);
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  padding: 7px 14px; position: sticky; top: 46px; z-index: 90;
+}
+.o_hierarchy_cp .o_btn_new { flex-shrink: 0; }
+.o_hier_app_title { font-size: 15px; font-weight: 700; color: var(--o-body-color); flex: 1; }
+.o_view_toggles { display: flex; gap: 2px; margin-left: auto; }
+.o_view_btn {
+  width: 30px; height: 30px; border: 1px solid var(--o-border); background: white;
+  border-radius: 4px; cursor: pointer; color: #6c757d; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+}
+.o_view_btn.active { background: var(--o-navbar-bg); color: white; border-color: var(--o-navbar-bg); }
+.o_view_btn:not(.active):hover { background: var(--o-body-bg); }
+.o_hier_search {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--o-border); border-radius: 4px;
+  padding: 3px 10px; background: white; flex: 1; max-width: 340px;
+}
+.o_hier_search input { border: none; outline: none; font-size: 13px; flex: 1; background: transparent; color: var(--o-body-color); }
+
+.o_filter_bar {
+  background: #f8f9fa; border-bottom: 1px solid var(--o-border);
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px; flex-wrap: wrap;
+  font-size: 12px; color: #6c757d;
+}
+.o_filter_pill {
+  padding: 2px 12px; border-radius: 20px; font-size: 12px; cursor: pointer;
+  border: 1px solid var(--o-border); background: white; color: #495057;
+}
+.o_filter_pill.active { background: var(--o-navbar-bg); color: white; border-color: var(--o-navbar-bg); }
+.o_filter_sep { color: #dee2e6; }
+.o_group_pill {
+  display: flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px;
+  background: #e8d5ff; color: var(--o-badge-planned); border: 1px solid #c7a3e8; font-size: 12px;
+}
+.o_group_pill button { background: none; border: none; cursor: pointer; color: inherit; font-size: 13px; line-height: 1; padding: 0 0 0 2px; }
+
+.o_hierarchy_table_wrap {
+  flex: 1; overflow-y: auto; background: var(--o-body-bg);
+}
+.o_hierarchy_table {
+  width: 100%; border-collapse: collapse; font-size: 13px; background: white;
+  border-bottom: 1px solid var(--o-border);
+}
+.o_hierarchy_table thead tr { background: #f8f9fa; border-bottom: 1px solid var(--o-border); }
+.o_hierarchy_table th {
+  padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 700;
+  color: #6c757d; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap;
+}
+.o_hier_sort { cursor: pointer; }
+.o_hier_sort:hover { color: var(--o-navbar-bg); }
+.o_hierarchy_table td { padding: 0; border-bottom: 1px solid #f0f1f3; }
+.o_td_inner { display: flex; align-items: center; padding: 8px 12px; gap: 7px; min-height: 38px; }
+
+/* Company row */
+.o_hier_company td { background: white; }
+.o_hier_company:hover td { background: #fafafa; }
+.o_expand_btn {
+  width: 18px; height: 18px; border: 1px solid var(--o-border); border-radius: 3px;
+  background: white; cursor: pointer; font-size: 10px; color: #6c757d;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.o_expand_btn:hover { background: var(--o-body-bg); }
+.o_hier_co_avatar {
+  width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; color: white;
+}
+.o_hier_co_name { font-weight: 600; color: var(--o-body-color); flex: 1; cursor: pointer; }
+.o_hier_co_name:hover { color: var(--o-navbar-bg); text-decoration: underline; }
+
+/* Type group row */
+.o_hier_type td { background: #fafbfc; border-bottom: 1px solid #eef0f2 !important; }
+.o_type_indent { display: inline-block; width: 46px; flex-shrink: 0; }
+.o_type_label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  color: #6c757d; flex: 1;
+}
+.o_type_count {
+  font-size: 10px; background: #e9ecef; color: #495057;
+  padding: 1px 6px; border-radius: 10px; font-weight: 700; margin-left: 4px;
+}
+.o_hier_add_btn {
+  font-size: 11px; padding: 1px 8px; border: 1px solid var(--o-border); border-radius: 3px;
+  background: white; color: var(--o-tab-inactive); cursor: pointer; margin-left: auto;
+}
+.o_hier_add_btn:hover { color: var(--o-navbar-bg); border-color: var(--o-navbar-bg); }
+
+/* Contact row */
+.o_hier_contact td { background: white; }
+.o_hier_contact:hover td { background: #f8f9fa; }
+.o_contact_indent { display: inline-block; width: 68px; flex-shrink: 0; }
+.o_hier_c_avatar {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 10px; color: white;
+}
+.o_hier_c_name { color: var(--o-body-color); cursor: pointer; }
+.o_hier_c_name:hover { color: var(--o-navbar-bg); text-decoration: underline; }
+
+/* Tags / badges in cells */
+.o_hier_type_badge {
+  font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 600;
+}
+.o_avb_id_cell { font-size: 12px; font-weight: 600; color: var(--o-tab-inactive); font-family: monospace; }
+.o_empty_type { font-size: 12px; color: #adb5bd; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="meta-topbar">
+  <span style="font-weight:600;color:#fff;letter-spacing:0.3px;">ERP-425 Mockup</span>
+  <span class="sep">|</span>
+  <button id="v-hierarchy" onclick="showView('hierarchy')">Hierarchy View</button>
+  <button id="v-account"   onclick="showView('account')" class="active">Account Form</button>
+  <button id="v-contact"   onclick="showView('contact')">Contact Form</button>
+  <button id="v-flows"     onclick="showView('flows')">Lifecycle Flows</button>
+</div>
+<div class="o_wizard_overlay" id="flowWizard">
+  <div class="o_wizard_dialog" id="wizDialog">
+
+    <!-- SCREEN 0: Flow Selection -->
+    <div id="wizSelectScreen">
+      <div class="o_wizard_header">
+        <h2 id="wizHeaderTitle">Create New Account</h2>
+        <p>Select the flow that matches your situation — the system will guide you step by step</p>
+      </div>
+      <div class="o_wizard_body" style="padding:20px 24px 8px;">
+        <div class="o_wizard_grid">
+
+          <div class="o_flow_card" onclick="selectFlow(this,'new')">
+            <div class="o_flow_icon" style="background:#e8f5e9;">🏢</div>
+            <div class="o_flow_title">Create from Scratch</div>
+            <div class="o_flow_desc">Account does not exist in any system yet. Enter all information manually — 3 guided steps.</div>
+            <div class="o_flow_fields">
+              <span class="o_flow_field_chip">Account Name</span>
+              <span class="o_flow_field_chip">Account Type</span>
+              <span class="o_flow_field_chip">Primary Region</span>
+              <span class="o_flow_field_chip">Address</span>
+            </div>
+          </div>
+
+          <div class="o_flow_card" onclick="selectFlow(this,'sf')">
+            <div class="o_flow_icon" style="background:#e3f2fd;">🔄</div>
+            <div class="o_flow_title">Import from Salesforce</div>
+            <div class="o_flow_desc">Account already exists in Salesforce. Enter the SF Account ID and the system auto-fills remaining fields via sync.</div>
+            <div class="o_flow_fields">
+              <span class="o_flow_field_chip">SF Account ID</span>
+              <span class="o_flow_field_chip">AVB ID</span>
+              <span class="o_flow_field_chip">Account Type</span>
+            </div>
+          </div>
+
+          <div class="o_flow_card" onclick="selectFlow(this,'convert')">
+            <div class="o_flow_icon" style="background:#fff3e0;">⬆️</div>
+            <div class="o_flow_title">Convert Prospect → Member</div>
+            <div class="o_flow_desc">Prospect account is qualified and ready to onboard as an official Member. Updates Account Type and sets up membership.</div>
+            <div class="o_flow_fields">
+              <span class="o_flow_field_chip">Account Type</span>
+              <span class="o_flow_field_chip">Membership Type</span>
+              <span class="o_flow_field_chip">Dues Start Date</span>
+            </div>
+          </div>
+
+          <div class="o_flow_card" onclick="selectFlow(this,'reactivate')">
+            <div class="o_flow_icon" style="background:#f3e5f5;">♻️</div>
+            <div class="o_flow_title">Reactivate Account</div>
+            <div class="o_flow_desc">Previously inactive account needs to be reactivated. Updates status and sets the reactivation date.</div>
+            <div class="o_flow_fields">
+              <span class="o_flow_field_chip">Member Status</span>
+              <span class="o_flow_field_chip">Member Status Active</span>
+              <span class="o_flow_field_chip">MS Active Date</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="o_wizard_footer" style="padding-top:16px;">
+          <button class="o_wizard_cancel" onclick="closeWizard()">Cancel</button>
+          <button class="o_wizard_start" id="wizardStartBtn" onclick="startFlow()">Start Guided Flow →</button>
+        </div>
+      </div>
+    </div><!-- /wizSelectScreen -->
+
+    <!-- SCREEN 1: Step View (multi-step form) -->
+    <div id="wizStepScreen" style="display:none;">
+      <div id="wizStepHdr" class="o_wiz_step_hdr"></div>
+      <div id="wizProgress" class="o_wiz_progress"></div>
+      <div id="wizStepBody" class="o_wiz_step_body"></div>
+      <div class="o_wiz_step_footer">
+        <button class="o_wiz_btn_secondary" onclick="wizChangeFlow()">← Change flow</button>
+        <div style="display:flex;gap:8px;">
+          <button class="o_wiz_btn_secondary" id="wizPrevBtn" onclick="wizPrev()" style="display:none;">← Back</button>
+          <button class="o_wiz_btn_primary" id="wizNextBtn" onclick="wizNext()">Next →</button>
+          <button class="o_wiz_btn_success" id="wizFinBtn" onclick="wizFinish()" style="display:none;">✓ Finish</button>
+        </div>
+      </div>
+    </div><!-- /wizStepScreen -->
+
+  </div><!-- /wizDialog -->
+</div><!-- /flowWizard -->
+
+<!-- ============================================================
+     HIERARCHY VIEW  (ERP-427 / ERP-428 / ERP-429)
+     ============================================================ -->
+<div class="view view-hierarchy" id="view-hierarchy">
+
+  <!-- NAVBAR -->
+  <div class="o_main_navbar">
+    <div class="o_menu_toggle">⊞</div>
+    <span class="o_navbar_app">Account Management</span>
+    <span class="o_navbar_submenu">Accounts <small>▾</small></span>
+    <button class="o_navbar_new_btn">+</button>
+    <div class="o_navbar_search">
+      <button class="o_navbar_filter_pill">All <small>▾</small></button>
+      <div class="search_wrap"><span class="s_icon">🔍</span><input class="o_searchbox" placeholder="Search..."></div>
+    </div>
+    <div class="o_navbar_icons">
+      <div class="o_navbar_icon">🎨</div><div class="o_navbar_icon">💬</div>
+      <div class="o_navbar_icon">🕐</div><div class="o_navbar_icon">⊞</div>
+      <div class="o_user_avatar">A</div>
+    </div>
+  </div>
+
+  <!-- CONTROL PANEL -->
+  <div class="o_hierarchy_cp">
+    <button class="o_btn_new" onclick="openWizard()">New</button>
+    <span class="o_hier_app_title">Account Management</span>
+    <div class="o_hier_search">
+      <span style="color:#adb5bd;font-size:14px;">🔍</span>
+      <input placeholder="Search accounts, AVB ID, name...">
+      <button style="background:none;border:none;color:#adb5bd;cursor:pointer;font-size:12px;">Filters ▾</button>
+      <button style="background:none;border:none;color:#adb5bd;cursor:pointer;font-size:12px;">Group By ▾</button>
+    </div>
+    <div class="o_view_toggles">
+      <button class="o_view_btn active" title="Hierarchy view">⊞</button>
+      <button class="o_view_btn" title="List view">☰</button>
+      <button class="o_view_btn" title="Kanban view">⊟</button>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="o_filter_bar">
+    <span class="o_filter_pill active">Members</span>
+    <span class="o_filter_pill">Prospects</span>
+    <span class="o_filter_pill">All Accounts</span>
+    <span class="o_filter_sep">|</span>
+    <span style="font-size:12px;color:#6c757d;">Group by:</span>
+    <span class="o_group_pill">Company <button onclick="this.parentElement.remove()">×</button></span>
+    <span style="margin-left:auto;font-size:12px;color:#6c757d;">80 accounts</span>
+  </div>
+
+  <!-- HIERARCHY TABLE -->
+  <div class="o_hierarchy_table_wrap">
+    <table class="o_hierarchy_table">
+      <thead>
+        <tr>
+          <th style="width:36%;" class="o_hier_sort">Name ↕</th>
+          <th style="width:10%;" class="o_hier_sort">AVB ID ↕</th>
+          <th style="width:10%;" class="o_hier_sort">Account Type ↕</th>
+          <th style="width:11%;" class="o_hier_sort">Primary Region ↕</th>
+          <th style="width:13%;">Phone</th>
+          <th style="width:10%;">Member Status</th>
+          <th style="width:10%;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ══ COMPANY 1: Don's Appliances ══ -->
+        <tr class="o_hier_company" id="co1">
+          <td>
+            <div class="o_td_inner">
+              <button class="o_expand_btn" onclick="toggleHier('co1')">▾</button>
+              <div class="o_hier_co_avatar" style="background:#2e7d32;">D</div>
+              <span class="o_hier_co_name" onclick="showView('account')">Don's Appliances</span>
+              <span class="b b-std" style="font-size:9px;">is_company</span>
+            </div>
+          </td>
+          <td><div class="o_td_inner"><span class="o_avb_id_cell">AVB-10042</span></div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_active">Member</span></div></td>
+          <td><div class="o_td_inner">Atlantic</div></td>
+          <td><div class="o_td_inner">(412) 555-0192</div></td>
+          <td><div class="o_td_inner">Boarded</div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_active">Active</span></div></td>
+        </tr>
+        <!-- Type: Contact -->
+        <tr class="o_hier_type co1-child">
+          <td colspan="7">
+            <div class="o_td_inner" style="padding:5px 12px;">
+              <span class="o_type_indent"></span>
+              <span class="o_type_label">Contact</span>
+              <span class="o_type_count">2</span>
+              <button class="o_hier_add_btn">+ Add</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="o_hier_contact co1-child">
+          <td><div class="o_td_inner"><span class="o_contact_indent"></span><div class="o_hier_c_avatar" style="background:#2e7d32;">D</div><span class="o_hier_c_name">Don Brown <span class="o_primary_badge" style="font-size:9px;">Primary</span></span></div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#6c757d;font-size:12px;">Contact</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="font-size:12px;">don@donsappliances.com</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+        </tr>
+        <tr class="o_hier_contact co1-child">
+          <td><div class="o_td_inner"><span class="o_contact_indent"></span><div class="o_hier_c_avatar" style="background:#1565c0;">S</div><span class="o_hier_c_name">Sarah Lee</span></div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#6c757d;font-size:12px;">Contact</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="font-size:12px;">sarah@donsappliances.com</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+        </tr>
+        <!-- Type: Invoice Address -->
+        <tr class="o_hier_type co1-child">
+          <td colspan="7">
+            <div class="o_td_inner" style="padding:5px 12px;">
+              <span class="o_type_indent"></span>
+              <span class="o_type_label">Invoice Address</span>
+              <span class="o_type_count">1</span>
+              <button class="o_hier_add_btn">+ Add</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="o_hier_contact co1-child">
+          <td><div class="o_td_inner"><span class="o_contact_indent"></span><div class="o_hier_c_avatar" style="background:#e65100;">D</div><span class="o_hier_c_name">Don's Appliances (Billing)</span></div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#6c757d;font-size:12px;">Invoice Address</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="font-size:12px;">billing@donsappliances.com</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+        </tr>
+        <!-- Type: Delivery Address -->
+        <tr class="o_hier_type co1-child">
+          <td colspan="7">
+            <div class="o_td_inner" style="padding:5px 12px;">
+              <span class="o_type_indent"></span>
+              <span class="o_type_label">Delivery Address</span>
+              <span class="o_type_count">0</span>
+              <button class="o_hier_add_btn">+ Add</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ══ COMPANY 2: [9STOR] ══ -->
+        <tr class="o_hier_company" id="co2">
+          <td>
+            <div class="o_td_inner">
+              <button class="o_expand_btn" onclick="toggleHier('co2')">▾</button>
+              <div class="o_hier_co_avatar" style="background:#1565c0;">9</div>
+              <span class="o_hier_co_name">[9STOR] - 0156 CUBESMART CA ANAHEIM S ANAHEIM WAY</span>
+              <span class="b b-std" style="font-size:9px;">is_company</span>
+            </div>
+          </td>
+          <td><div class="o_td_inner"><span class="o_avb_id_cell">AVB-0156</span></div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_active">Member</span></div></td>
+          <td><div class="o_td_inner">Pacific</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner">Boarded</div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_active">Active</span></div></td>
+        </tr>
+        <tr class="o_hier_type co2-child">
+          <td colspan="7">
+            <div class="o_td_inner" style="padding:5px 12px;">
+              <span class="o_type_indent"></span>
+              <span class="o_type_label">Contact</span>
+              <span class="o_type_count">0</span>
+              <button class="o_hier_add_btn">+ Add</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="o_hier_type co2-child">
+          <td colspan="7"><div class="o_empty_type">No contacts — click Add to create one.</div></td>
+        </tr>
+
+        <!-- ══ COMPANY 3: Metro Appliances (Prospect) ══ -->
+        <tr class="o_hier_company" id="co3">
+          <td>
+            <div class="o_td_inner">
+              <button class="o_expand_btn" onclick="toggleHier('co3')">▸</button>
+              <div class="o_hier_co_avatar" style="background:#7b5ea7;">M</div>
+              <span class="o_hier_co_name">Metro Appliances &amp; More</span>
+              <span class="b b-std" style="font-size:9px;">is_company</span>
+            </div>
+          </td>
+          <td><div class="o_td_inner"><span class="o_avb_id_cell" style="color:#adb5bd;">—</span></div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_prospect">Prospect</span></div></td>
+          <td><div class="o_td_inner">Southeast</div></td>
+          <td><div class="o_td_inner">(305) 555-0134</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner"><span class="o_hier_type_badge o_s_prospect">Prospect</span></div></td>
+        </tr>
+        <!-- Co3 children hidden by default -->
+        <tr class="o_hier_type co3-child" style="display:none;">
+          <td colspan="7">
+            <div class="o_td_inner" style="padding:5px 12px;">
+              <span class="o_type_indent"></span>
+              <span class="o_type_label">Contact</span>
+              <span class="o_type_count">1</span>
+              <button class="o_hier_add_btn">+ Add</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="o_hier_contact co3-child" style="display:none;">
+          <td><div class="o_td_inner"><span class="o_contact_indent"></span><div class="o_hier_c_avatar" style="background:#7b5ea7;">R</div><span class="o_hier_c_name">Roberto Mendez</span></div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#6c757d;font-size:12px;">Contact</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="font-size:12px;">r.mendez@metroappliances.com</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+          <td><div class="o_td_inner" style="color:#adb5bd;">—</div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGER -->
+  <div class="o_hier_pager">
+    <span>1–3 / 80</span>
+    <button class="o_pager_btn">‹</button>
+    <button class="o_pager_btn">›</button>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     ACCOUNT FORM VIEW
+     ============================================================ -->
+<div class="view-form active" id="view-account">
+
+  <!-- ODOO MAIN NAVBAR -->
+  <div class="o_main_navbar">
+    <div class="o_menu_toggle">⊞</div>
+    <span class="o_navbar_app">Account Management</span>
+    <span class="o_navbar_submenu">Accounts <small>▾</small></span>
+    <button class="o_navbar_new_btn">+</button>
+    <div class="o_navbar_search">
+      <button class="o_navbar_filter_pill">All <small>▾</small></button>
+      <button class="o_navbar_filter_pill">Text <small>▾</small></button>
+      <div class="search_wrap">
+        <span class="s_icon">🔍</span>
+        <input class="o_searchbox" placeholder="Search...">
+      </div>
+    </div>
+    <div class="o_navbar_icons">
+      <div class="o_navbar_icon">🎨</div>
+      <div class="o_navbar_icon">💬</div>
+      <div class="o_navbar_icon">🕐</div>
+      <div class="o_navbar_icon">⊞</div>
+      <div class="o_user_avatar">A</div>
+    </div>
+  </div>
+
+  <!-- SINGLE-ROW CONTROL PANEL -->
+  <div class="o_control_panel">
+    <!-- Action buttons -->
+    <button class="o_btn_new" onclick="openWizard()">New</button>
+    <!-- Breadcrumb -->
+    <div class="o_breadcrumb">
+      <button class="o_back_btn">Account Management</button>
+      <span class="o_sep">/</span>
+      <span class="o_current_page">Don's Appliances
+        <span class="o_gear_wrap">
+          <span class="o_gear" onclick="toggleGearMenu('acc')" title="Actions">⚙</span>
+          <div class="o_gear_menu" id="gearMenu_acc">
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Edit Properties</div>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Duplicate</div>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>Archive</div>
+            <hr class="o_gear_divider"/>
+            <div class="o_gear_item danger" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>Delete</div>
+            <hr class="o_gear_divider"/>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Send SMS</div>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Download (vCard)</div>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy Lookup</div>
+            <div class="o_gear_item" onclick="closeGearMenu('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Grant portal access</div>
+          </div>
+        </span>
+        <span class="o_dirty_icons" id="dirtyIcons_acc">
+          <button class="o_dirty_btn save" title="Save manually" onclick="saveDirty('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/><path d="M18 2a4 4 0 014 4v11a3 3 0 01-3 3H5a3 3 0 01-3-3V6a4 4 0 014-4"/></svg></button>
+          <button class="o_dirty_btn discard" title="Discard" onclick="discardDirty('acc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </span>
+      </span>
+    </div>
+    <!-- Stat buttons (inline, centered) -->
+    <div class="o_cp_stats">
+      <a class="o_stat_button">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">2</span><span class="o_stat_text">Opportunities</span></span>
+      </a>
+      <a class="o_stat_button">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.1 17 7 17h11v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H15c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0019.43 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">0</span><span class="o_stat_text">Sales</span></span>
+      </a>
+      <a class="o_stat_button">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z"/><path d="M8 15h8v2H8zm0-4h8v2H8zm0-4h5v2H8z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">$0.00</span><span class="o_stat_text">Invoiced</span></span>
+      </a>
+      <a class="o_stat_button">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2zM7 11h5v5H7z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">0</span><span class="o_stat_text">Meetings</span></span>
+      </a>
+      <a class="o_stat_button">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">0</span><span class="o_stat_text">Tasks</span></span>
+      </a>
+      <a class="o_stat_button" style="border-right:none;">
+        <span class="o_stat_icon"><svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6a6 6 0 110 12 6 6 0 01-6-6H4a8 8 0 108-8z"/></svg></span>
+        <span class="o_stat_info"><span class="o_stat_value">1</span><span class="o_stat_text">Subscriptions</span></span>
+      </a>
+    </div>
+    <!-- Pager -->
+    <div class="o_pager">
+      <span class="o_pager_value">5 / 80</span>
+      <button class="o_pager_btn">&#8249;</button>
+      <button class="o_pager_btn">&#8250;</button>
+    </div>
+  </div>
+
+  <!-- hidden legacy statusbar kept for updateStatusBar() JS compat -->
+  <div class="o_statusbar_status" id="accountStatusBar" style="display:none;"></div>
+
+  <!-- FLOW GUIDE BAR — persistent, all steps clickable -->
+  <div class="o_flow_guide" id="flowGuide" style="display:none;">
+    <div class="o_guide_top">
+      <span class="o_guide_badge" id="guideBadge"></span>
+      <div class="o_guide_steps" id="guideSteps"></div>
+      <button class="o_guide_close" onclick="dismissGuide()" title="Exit guide">✕</button>
+    </div>
+    <div class="o_guide_detail" id="guideDetail"></div>
+  </div>
+
+  <!-- BODY ROW: form (flex:1) + chatter (360px) -->
+  <div class="o_body_row">
+
+    <!-- LEFT: scrollable form area -->
+    <div class="o_form_scroll">
+      <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+
+          <!-- DESIGN LEGEND -->
+          <div class="design_legend">
+            <strong>Design Spec:</strong>
+            <span><span class="b b-in">IN ODOO</span> z_ field đã có trên hệ thống</span>
+            <span><span class="b b-pl">PLANNED</span> x_ field cần tạo mới</span>
+            <span><span class="b b-std">STANDARD</span> field Odoo gốc</span>
+            <span><span class="b b-req">REQUIRED</span> bắt buộc khi tạo Account</span>
+          </div>
+
+          <!-- FORM SHEET -->
+          <div class="o_form_sheet" style="margin-top:12px;">
+
+            <!-- HEADER: Avatar + Name + Contact info -->
+            <div class="o_form_header">
+              <div class="o_avatar_box">
+                <div class="o_avatar_placeholder">D</div>
+              </div>
+              <div class="o_form_header_info">
+                <div class="o_person_company_toggle">
+                  <label class="o_radio_item"><input type="radio" name="acc_type"> Person</label>
+                  <label class="o_radio_item selected"><input type="radio" name="acc_type" checked> Company</label>
+                  <span class="b b-std">STANDARD</span>
+                </div>
+                <input class="o_company_name" value="Don's Appliances" placeholder="Company Name...">
+                <div class="o_contact_inline">
+                  <div class="o_contact_line">
+                    <span class="o_icon">✉</span>
+                    <input placeholder="Email" value="">
+                    <span class="b b-std">STANDARD</span>
+                  </div>
+                  <div class="o_contact_line">
+                    <span class="o_icon">📞</span>
+                    <input placeholder="Phone" value="(412) 555-0192">
+                    <span class="b b-std">STANDARD</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Pipeline status — top-right of form header -->
+              <div class="o_pipeline_bar" id="accountPipeline" style="margin-left:auto;align-self:flex-start;margin-top:2px;">
+                <span class="o_pipe_item active">Prospect</span>
+                <button class="o_pipe_item" onclick="openWizardFlow('member')" title="Convert to Member">Member</button>
+                <button class="o_pipe_item" onclick="openWizardFlow('inactive')" title="Deactivate Account">Inactive</button>
+              </div>
+            </div>
+
+            <!-- MAIN FIELDS: 2-col grid -->
+            <div class="o_field_rows">
+              <div class="o_field_row" data-field="account-type">
+                <div class="o_form_label">Account Type</div>
+                <div class="o_field_value">
+                  <select><option selected>Member</option><option>Prospect</option><option>Other</option><option>Do Not Contact</option></select>
+                </div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span><span class="b b-req">REQ</span></div>
+              </div>
+              <div class="o_field_row" data-field="primary-region">
+                <div class="o_form_label">Primary Region</div>
+                <div class="o_field_value">
+                  <select><option selected>Atlantic</option><option>BrandSource</option><option>Mid-America</option><option>Pacific</option><option>Southeast</option></select>
+                </div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span><span class="b b-req">REQ</span></div>
+              </div>
+              <div class="o_field_row" data-field="record-type">
+                <div class="o_form_label">Record Type</div>
+                <div class="o_field_value">
+                  <select><option selected>Member</option><option>Prospect</option><option>Test Account</option></select>
+                </div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span></div>
+              </div>
+              <div class="o_field_row" data-field="known-as">
+                <div class="o_form_label">Known As</div>
+                <div class="o_field_value"><input value="Don's"></div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span></div>
+              </div>
+              <div class="o_field_row" data-field="avb-id">
+                <div class="o_form_label">AVB ID <span class="o_help" title="Maps to Odoo standard 'Reference' field (ref). Already populated via Salesforce sync.">?</span></div>
+                <div class="o_field_value"><span class="o_readonly">AVB-10042</span></div>
+                <div class="o_field_badges"><span class="b b-in">IN ODOO</span></div>
+              </div>
+              <div class="o_field_row" data-field="primary-contact">
+                <div class="o_form_label">Primary Contact <span class="o_help" title="AVB primary contact for this account (x_avb_primary_contact_id). Must Have — A-06.">?</span></div>
+                <div class="o_field_value"><input placeholder="Search contact..." value="Don Brown"></div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span><span class="b b-req">REQ</span></div>
+              </div>
+              <!-- Address block — left col -->
+              <div class="o_field_row" data-field="address" style="grid-row: span 3; align-items: flex-start; padding-top:10px;">
+                <div class="o_form_label" style="padding-top:2px;">Address</div>
+                <div class="o_field_value" style="line-height:1.8;">
+                  1200 Perry Highway<br>
+                  Pittsburgh, Pennsylvania 15237<br>
+                  United States
+                </div>
+                <div class="o_field_badges" style="align-self:flex-start;padding-top:4px;"><span class="b b-std">STANDARD</span></div>
+              </div>
+              <div class="o_field_row" data-field="location-type">
+                <div class="o_form_label">Location Type</div>
+                <div class="o_field_value">
+                  <select><option>Single Store</option><option selected>Chain</option></select>
+                </div>
+                <div class="o_field_badges"><span class="b b-pl">PLANNED</span></div>
+              </div>
+              <div class="o_field_row" data-field="tax-id">
+                <div class="o_form_label">Tax ID <span class="o_help">?</span></div>
+                <div class="o_field_value"><input placeholder="not applicable" style="color:var(--o-placeholder)"></div>
+                <div class="o_field_badges"><span class="b b-std">STANDARD</span></div>
+              </div>
+              <div class="o_field_row" data-field="website">
+                <div class="o_form_label">Website</div>
+                <div class="o_field_value"><input value="www.donsappliances.com"></div>
+                <div class="o_field_badges"><span class="b b-std">STANDARD</span></div>
+              </div>
+              <div class="o_field_row span-full" data-field="tags">
+                <div class="o_form_label">Tags</div>
+                <div class="o_field_value"><span class="o_tag_green">Appliance</span><span class="o_tag">Bedding</span></div>
+                <div class="o_field_badges"><span class="b b-std">STANDARD</span></div>
+              </div>
+              <div class="o_field_row" data-field="currency">
+                <div class="o_form_label">Currency</div>
+                <div class="o_field_value">USD</div>
+                <div class="o_field_badges"><span class="b b-std">STANDARD</span></div>
+              </div>
+            </div>
+
+            <!-- NOTEBOOK TABS -->
+            <div class="o_notebook">
+              <div class="nav-tabs">
+                <a class="nav-link active" onclick="showTab('acc','contacts')">Contacts</a>
+                <a class="nav-link" onclick="showTab('acc','sales')">Sales &amp; Purchase</a>
+                <a class="nav-link" onclick="showTab('acc','invoicing')">Invoicing <span class="b b-std" style="vertical-align:middle;">STANDARD</span></a>
+                <a class="nav-link" onclick="showTab('acc','salesforce')">Salesforce</a>
+                <a class="nav-link" onclick="showTab('acc','member')">Member Services</a>
+                
+                
+                
+                <a class="nav-link" onclick="showTab('acc','billing')">Billing</a>
+              <a class="nav-link" onclick="showTab('acc','subscriptions')">Subscriptions <span class="b b-std" style="vertical-align:middle;">STANDARD</span></a>
+                <a class="nav-link" onclick="showTab('acc','notes')">Notes</a>
+              </div>
+
+              <!-- TAB: CONTACTS — grouped list view (ERP-433 / ERP-463) -->
+              <div class="o_tab_content active" id="acc-contacts">
+
+                <!-- Toolbar row -->
+
+                <!-- CONTACT TYPE GROUP: Contact -->
+                <div class="o_contacts_group">
+                  <div class="o_contacts_group_header" onclick="toggleSection(this)">
+                    <span class="o_section_arrow">▾</span>
+                    <span class="o_section_label">Contact</span>
+                    <span class="o_section_count">2</span>
+                    <button class="o_add_contact_btn" onclick="event.stopPropagation()">+ Add</button>
+                  </div>
+                  <div class="o_contacts_group_body">
+                    <table class="o_contacts_list_table">
+                      <thead>
+                        <tr>
+                          <th style="width:28%">Name</th>
+                          <th style="width:18%">Job Position</th>
+                          <th style="width:22%">Email</th>
+                          <th style="width:14%">Phone</th>
+                          <th style="width:10%">SF Sync</th>
+                          <th style="width:8%"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="o_cl_row o_cl_primary">
+                          <td>
+                            <div class="o_cl_name_cell">
+                              <div class="o_hier_c_avatar" style="background:#2e7d32;">D</div>
+                              <span class="o_cl_link">Don Brown</span>
+                              <span class="o_primary_badge">Primary</span>
+                            </div>
+                          </td>
+                          <td class="o_cl_muted">Owner</td>
+                          <td class="o_cl_muted">don@donsappliances.com</td>
+                          <td class="o_cl_muted">(412) 555-0192</td>
+                          <td><span class="o_sf_badge">SF Sync</span></td>
+                          <td><button class="o_cl_action_btn">···</button></td>
+                        </tr>
+                        <tr class="o_cl_row">
+                          <td>
+                            <div class="o_cl_name_cell">
+                              <div class="o_hier_c_avatar" style="background:#1565c0;">S</div>
+                              <span class="o_cl_link">Sarah Lee</span>
+                            </div>
+                          </td>
+                          <td class="o_cl_muted">Marketing Manager</td>
+                          <td class="o_cl_muted">sarah@donsappliances.com</td>
+                          <td class="o_cl_muted">—</td>
+                          <td><span style="color:#adb5bd;font-size:11px;">—</span></td>
+                          <td><button class="o_cl_action_btn">···</button></td>
+                        </tr>
+                        <tr class="o_cl_add_row">
+                          <td colspan="6">
+                            <button class="o_cl_add_inline" onclick="openWizard()">+ Add a contact</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- CONTACT TYPE GROUP: Invoice Address -->
+                <div class="o_contacts_group">
+                  <div class="o_contacts_group_header" onclick="toggleSection(this)">
+                    <span class="o_section_arrow">▾</span>
+                    <span class="o_section_label">Invoice Address</span>
+                    <span class="o_section_count">1</span>
+                    <button class="o_add_contact_btn" onclick="event.stopPropagation()">+ Add</button>
+                  </div>
+                  <div class="o_contacts_group_body">
+                    <table class="o_contacts_list_table">
+                      <thead>
+                        <tr>
+                          <th style="width:28%">Name</th>
+                          <th style="width:18%">Street</th>
+                          <th style="width:22%">City / State</th>
+                          <th style="width:14%">ZIP</th>
+                          <th style="width:10%">SF Sync</th>
+                          <th style="width:8%"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="o_cl_row">
+                          <td>
+                            <div class="o_cl_name_cell">
+                              <div class="o_hier_c_avatar" style="background:#e65100;">D</div>
+                              <span class="o_cl_link">Don's Appliances (Billing)</span>
+                            </div>
+                          </td>
+                          <td class="o_cl_muted">123 Main St</td>
+                          <td class="o_cl_muted">Pittsburgh, PA</td>
+                          <td class="o_cl_muted">15222</td>
+                          <td><span class="o_sf_badge">SF Sync</span></td>
+                          <td><button class="o_cl_action_btn">···</button></td>
+                        </tr>
+                        <tr class="o_cl_add_row">
+                          <td colspan="6">
+                            <button class="o_cl_add_inline">+ Add billing address</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- CONTACT TYPE GROUP: Delivery Address (collapsed) -->
+                <div class="o_contacts_group">
+                  <div class="o_contacts_group_header" onclick="toggleSection(this)">
+                    <span class="o_section_arrow">▸</span>
+                    <span class="o_section_label">Delivery Address</span>
+                    <span class="o_section_count">0</span>
+                    <button class="o_add_contact_btn" onclick="event.stopPropagation()">+ Add</button>
+                  </div>
+                  <div class="o_contacts_group_body" style="display:none;">
+                    <table class="o_contacts_list_table">
+                      <tbody>
+                        <tr class="o_cl_add_row">
+                          <td colspan="6">
+                            <button class="o_cl_add_inline">+ Add delivery address</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- TAB: SALES & PURCHASE -->
+              <div class="o_tab_content" id="acc-sales">
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_horizontal_separator">SALES</div>
+                    <div class="o_nb_row"><div class="o_nb_label">Salesperson <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Terms <span class="b b-std">STANDARD</span></div><div class="o_nb_value">30 Days</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Method <span class="b b-std">STANDARD</span></div><div class="o_nb_value"><select><option selected>ACH</option><option>Check</option><option>Credit Card</option><option>Wire</option></select></div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Pricelist <span class="b b-std">STANDARD</span></div><div class="o_nb_value">Standard Price Book (USD)</div></div>
+                  </div>
+                  <div>
+                    <div class="o_horizontal_separator">PURCHASE</div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Terms <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Method <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_horizontal_separator">FISCAL INFORMATION</div>
+                    <div class="o_nb_row"><div class="o_nb_label">Fiscal Position <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+                <!-- AVB TEAM ASSIGNMENT — 2-col full width -->
+                <div style="margin-top:4px;">
+                  <div class="o_horizontal_separator">AVB TEAM ASSIGNMENT <span style="font-size:10px;font-weight:400;color:#adb5bd">(custom)</span></div>
+                  <div class="o_nb_grid">
+                    <div>
+                      <div class="o_nb_row"><div class="o_nb_label">BrandSource RM <span class="o_help" title="x_brandsource_rm_id — G-01 Must Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value">Jane Smith</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">BrandSource MR <span class="o_help" title="x_brandsource_mr_id — G-02 Must Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value">Mike Johnson</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Solution Engineer <span class="o_help" title="x_solution_engineer_id — G-07 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Member Relations Lead <span class="o_help" title="x_mr_manager_lead_id — G-05 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Marketing Team Manager <span class="o_help" title="x_mktg_team_manager_id — G-03 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Marketing Account Executive <span class="o_help" title="x_mktg_ae_id — G-04 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Satisfaction Rating <span class="o_help" title="x_satisfaction — D-11 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value">🟢 Green</div></div>
+                    </div>
+                    <div>
+                      <div class="o_nb_row"><div class="o_nb_label">Website Coordinator <span class="o_help" title="x_website_coord_id — G-06 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">ProSource RBM <span class="o_help" title="x_prosource_rbm_id — G-10 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">EW Rep <span class="o_help" title="x_ew_rep_id — G-11 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Canada Key Account Manager <span class="o_help" title="x_canada_kam_id — G-12 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Digital Services Lead <span class="o_help" title="x_digital_services_lead_id — G-13 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                      <div class="o_nb_row"><div class="o_nb_label">Marketing Account Type <span class="o_help" title="x_marketing_account_type — G-14 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- MISC -->
+                <div class="o_nb_grid" style="margin-top:4px;">
+                  <div>
+                    <div class="o_horizontal_separator">MISC <span class="b b-std" style="font-size:9px;vertical-align:middle;">STANDARD</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Company ID <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Reference <span class="b b-std">STANDARD</span></div><div class="o_nb_value" style="font-size:12px;color:var(--o-tab-inactive);">AVB-0156</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Company <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Industry <span class="b b-std">STANDARD</span></div><div class="o_nb_value" style="font-size:12px;">Storage / Self-Storage</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">GLN <span class="b b-std">STANDARD</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                  <div></div>
+                </div>
+              </div>
+
+              <!-- TAB: SALESFORCE -->
+              <div class="o_tab_content" id="acc-salesforce">
+
+                <!-- IDENTITY -->
+                <div class="o_horizontal_separator">IDENTITY</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Object Type <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Account</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Account ID <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_readonly">001Qp00000Kf49mIAB</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">AVB ID <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_readonly">9STOR</div></div>
+                  </div>
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Type <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">AVB Finance Vendor</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Record Type <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Parent Group <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+
+                <!-- SALESFORCE AUDIT -->
+                <div class="o_horizontal_separator">SALESFORCE AUDIT</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Created Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Apr 18, 2024, 11:18 PM</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Created By <span class="b b-in">IN ODOO</span></div><div class="o_nb_value" style="color:var(--o-link);">Felicia Medrano</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Last Modified Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Apr 9, 4:10 AM</div></div>
+                  </div>
+                </div>
+
+                <!-- SYNC RUNTIME -->
+                <div class="o_horizontal_separator">SYNC RUNTIME</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">First Synced At <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Jun 10, 12:27 PM</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Last Synced At <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Jun 20, 12:19 AM</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Sync Status <span class="b b-in">IN ODOO</span></div><div class="o_nb_value" style="color:#198754">Synced</div></div>
+                  </div>
+                </div>
+
+                <!-- PAYMENT -->
+                <div class="o_horizontal_separator">PAYMENT</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Payment Method <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Payment Due Days <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">0</div></div>
+                  </div>
+                </div>
+
+                <!-- BILLING ROUTING -->
+                <div class="o_horizontal_separator">BILLING ROUTING</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">Billing Contact Roles <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Mobile <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+
+                <!-- MEMBER SERVICES (SF-synced copies) -->
+                <div class="o_horizontal_separator">MEMBER SERVICES</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Member Status <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><span class="o_badge" style="background:#d1e7dd;color:#198754;border:1px solid #a3cfbb;">Active</span></div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Member Active Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Member Termed Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Member Hold Reason <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Member Hold End Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Billing Blocked <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--o-navbar-bg);"></div></div>
+                  </div>
+                </div>
+
+                <!-- ACCOUNT EXTRAS -->
+                <div class="o_horizontal_separator">ACCOUNT EXTRAS</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">Extra Invoice CC <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Extra Dunning CC <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+
+                <!-- DUES -->
+                <div class="o_horizontal_separator">DUES</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Base Region Dues <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">0.00</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Membership Level Dues <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">0.00</div></div>
+                  </div>
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">SF Membership Level <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Dues Start Date <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+
+                <!-- DUES CONTRACTS -->
+                <div class="o_horizontal_separator">DUES CONTRACTS</div>
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_nb_row"><div class="o_nb_label">Membership Dues Contract <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Base Region Dues Contract <span class="o_help">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- TAB: MEMBER SERVICES -->
+              <div class="o_tab_content" id="acc-member">
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_horizontal_separator">MEMBERSHIP STATUS <span class="b b-pl">PLANNED</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Member Status <span class="o_help" title="x_member_status — D-02 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value"><span class="o_badge" style="background:#d1e7dd;color:#198754;border:1px solid #a3cfbb;">Active</span></div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Member Active Date <span class="o_help" title="x_ms_active_date — D-09 Nice to Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">01/15/2020</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Member Termination Date <span class="o_help" title="x_ms_term_date — D-10 Nice to Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Hold Reason <span class="o_help" title="SF read-only copy (z_ field). See Salesforce tab for SF Member Hold Reason.">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Hold End Date <span class="o_help" title="SF read-only copy (z_ field). See Salesforce tab for SF Member Hold End Date.">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Billing Blocked <span class="o_help" title="z_ SF sync field — already in Odoo.">?</span> <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--o-navbar-bg);"></div></div>
+                  </div>
+                  <div>
+                    <div class="o_horizontal_separator">DUES CONFIGURATION <span class="b b-pl">PLANNED</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Membership Type <span class="o_help" title="x_membership_type — D-03 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">BrandSource</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Membership Level <span class="o_help" title="x_membership_level — D-06 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">Gold</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Member Class <span class="o_help" title="x_member_class — D-05 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Member Channel <span class="o_help" title="x_member_channel — D-04 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Tri-State Level <span class="o_help" title="x_tri_state_level — E-06 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Billing Type (Canada) <span class="o_help" title="x_cn_billing_type — E-02 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">Annual</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Dues Start Date <span class="o_help" title="x_dues_start_date — D-08 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">01/01/2024</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Dues (Admin Override) <span class="o_help" title="x_dues_admin_override — D-07 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Repayment Term (Canada) <span class="o_help" title="x_cn_repayment_term — E-03 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">Quarterly</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Fiscal Quarter Start (CA) <span class="o_help" title="x_cn_fiscal_quarter — E-07 Should Have">?</span> <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">Q1</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="o_tab_content" id="acc-billing">
+                <div class="o_nb_grid">
+                  <div>
+                    <div class="o_horizontal_separator">PAYMENT INFORMATION <span class="b b-pl">PLANNED</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Method <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">ACH</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Payment Due Days <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">30</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Tax ID (VAT) <span class="b b-std">STANDARD</span></div><div class="o_nb_value" style="font-size:12px;">12-3456789</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Currency <span class="b b-std">STANDARD</span></div><div class="o_nb_value" style="font-size:12px;">USD</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Billing Email (Extra CC) <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Dunning Email (Extra CC) <span class="b b-pl">PLANNED</span></div><div class="o_nb_value o_placeholder">—</div></div>
+                  </div>
+                  <div>
+                    <div class="o_horizontal_separator">TOTAL VOLUME <span class="b b-pl">PLANNED</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Total Group Volume <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;font-weight:600;">$4,200,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Total Retail Volume <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$3,800,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Annual Revenue <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$5,100,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Membership Level (calc) <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;color:#6f42c1;font-weight:600;">Gold</div></div>
+                  </div>
+                </div>
+                <div class="o_nb_grid" style="margin-top:4px;">
+                  <div>
+                    <div class="o_horizontal_separator">VOLUME BY CATEGORY <span class="b b-pl">PLANNED</span></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Appliance <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$2,100,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Furniture <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$850,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Bedding <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$320,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Electronics <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$210,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Builder Appliance <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$180,000</div></div>
+                  </div>
+                  <div>
+                    <div class="o_horizontal_separator" style="color:transparent;">.</div>
+                    <div class="o_nb_row"><div class="o_nb_label">Service <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$95,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Parts <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$42,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Luxury Appliance <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$280,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">SD Appliance <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$120,000</div></div>
+                    <div class="o_nb_row"><div class="o_nb_label">Other <span class="b b-pl">PLANNED</span></div><div class="o_nb_value" style="font-size:12px;">$103,000</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="o_tab_content" id="acc-invoicing">
+                <div class="o_nb_grid">
+                  <!-- LEFT: GENERAL -->
+                  <div>
+                    <div class="o_horizontal_separator">GENERAL <span class="b b-std" style="font-size:9px;vertical-align:middle;">STANDARD</span></div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Bank Accounts <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value">
+                        <button style="font-size:11px;padding:1px 8px;border:1px solid var(--o-border);border-radius:3px;background:white;cursor:pointer;color:var(--o-tab-inactive);">Save &amp; close</button>
+                        <span style="font-size:11px;color:#adb5bd;margin-left:6px;">No bank accounts yet</span>
+                      </div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Account Receivable <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="color:var(--o-tab-inactive);font-size:12px;">1100.0000 Account Receivable</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Account Payable <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="color:var(--o-tab-inactive);font-size:12px;">2015.0000 Accounts Payable - Trade</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Auto-post bills <span style="color:var(--o-navbar-bg);font-size:11px;cursor:help;" title="Bills will be auto-posted based on this setting">?</span> <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;">Ask after 3 validations without edits</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Ignore Abnormal Invoice Amount <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--o-navbar-bg);"></div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Ignore Abnormal Invoice Date <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--o-navbar-bg);"></div>
+                    </div>
+                  </div>
+                  <!-- RIGHT: CUSTOMER INVOICES -->
+                  <div>
+                    <div class="o_horizontal_separator">CUSTOMER INVOICES <span class="b b-std" style="font-size:9px;vertical-align:middle;">STANDARD</span></div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Invoice sending <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;color:var(--o-tab-inactive);">e-Invoicing &amp; Email</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">eInvoice format <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;color:#adb5bd;font-style:italic;">XML format</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Invoice report <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;color:#adb5bd;font-style:italic;">Invoice (default)</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Peppol e-address (EAS) <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value o_placeholder">—</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Peppol Endpoint <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value o_placeholder">—</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- CREDIT LIMITS section -->
+                <div class="o_nb_grid" style="margin-top:4px;">
+                  <div>
+                    <div class="o_horizontal_separator">CREDIT LIMITS <span class="b b-std" style="font-size:9px;vertical-align:middle;">STANDARD</span></div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Total Receivable <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;font-weight:600;">$0.00</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Days Sales Outstanding (DSO) <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;">0.0</div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Partner Limit <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--o-navbar-bg);"> <span style="font-size:12px;color:#6c757d;">Use partner-specific credit limit</span></div>
+                    </div>
+                    <div class="o_nb_row">
+                      <div class="o_nb_label">Credit Limit <span class="b b-std">STANDARD</span></div>
+                      <div class="o_nb_value" style="font-size:12px;color:#adb5bd;">$0.00</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB: SUBSCRIPTIONS (Standard Odoo) -->
+              <div class="o_tab_content" id="acc-subscriptions">
+
+                <!-- Subscription contract card -->
+                <div style="border:1px solid var(--o-border);border-radius:4px;margin-bottom:12px;overflow:hidden;">
+
+                  <!-- Contract header row -->
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--o-border);">
+                    <span id="ct1-arrow" style="font-size:14px;cursor:pointer;color:#495057;user-select:none;" onclick="toggleContract('ct1')">▼</span>
+                    <span style="font-weight:700;font-size:13px;flex:1;">Builders Supply Co.-S01013</span>
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                      <span style="background:#e65100;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Code: Builders Supply Co.-S01013</span>
+                      <span style="background:#198754;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Active</span>
+                      <span style="background:#0891b2;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Start: Jun 2, 2023</span>
+                    </div>
+                    <button style="background:var(--o-navbar-bg);color:white;border:none;border-radius:4px;font-size:12px;font-weight:600;padding:5px 14px;cursor:pointer;">View</button>
+                  </div>
+
+                  <!-- Subscription line items table -->
+                  <div id="ct1-body" style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                      <thead>
+                        <tr style="background:#f8f9fa;border-bottom:1px solid var(--o-border);">
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Order No.</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;">Product</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Product Family</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;">Quantity</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;white-space:nowrap;">Unit Price</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;white-space:nowrap;">Sub Total</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Billing Type</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date Start</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date End</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date of Next Invoice</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000001luB3IAI</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000005LCHMAA4] Custom Landing Page</div>
+                            <div style="color:#adb5bd;font-size:11px;">Custom Landing Page</div>
+                          </td>
+                          <td style="padding:8px 12px;">LP-C</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$500.00</td>
+                          <td style="padding:8px 12px;text-align:right;">$500.00</td>
+                          <td style="padding:8px 12px;">One-Time</td>
+                          <td style="padding:8px 12px;">2024-03-01</td>
+                          <td style="padding:8px 12px;">2024-03-31</td>
+                          <td style="padding:8px 12px;">2024-04-01</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000004FL8OIAW</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000005LCGmAAO] Google Search</div>
+                            <div style="color:#adb5bd;font-size:11px;">Google Search</div>
+                          </td>
+                          <td style="padding:8px 12px;">GS-DMF</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$286.32</td>
+                          <td style="padding:8px 12px;text-align:right;">$286.32</td>
+                          <td style="padding:8px 12px;">One-Time</td>
+                          <td style="padding:8px 12px;">2024-09-01</td>
+                          <td style="padding:8px 12px;">2024-09-30</td>
+                          <td style="padding:8px 12px;">2024-10-01</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000004FL8IIAW</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000005LCGmAAO] Google Search</div>
+                            <div style="color:#adb5bd;font-size:11px;">Google Search</div>
+                          </td>
+                          <td style="padding:8px 12px;">GS-DMF</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$911.23</td>
+                          <td style="padding:8px 12px;text-align:right;">$911.23</td>
+                          <td style="padding:8px 12px;">One-Time</td>
+                          <td style="padding:8px 12px;">2024-09-01</td>
+                          <td style="padding:8px 12px;">2024-09-30</td>
+                          <td style="padding:8px 12px;">2024-10-01</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000004FL8VIAW</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000005LCGuAAO] Facebook Display</div>
+                            <div style="color:#adb5bd;font-size:11px;">Facebook Display</div>
+                          </td>
+                          <td style="padding:8px 12px;">FD-DMF</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$303.59</td>
+                          <td style="padding:8px 12px;text-align:right;">$303.59</td>
+                          <td style="padding:8px 12px;">One-Time</td>
+                          <td style="padding:8px 12px;">2024-09-01</td>
+                          <td style="padding:8px 12px;">2024-09-30</td>
+                          <td style="padding:8px 12px;">2024-10-01</td>
+                        </tr>
+                        <tr>
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000004FL8RIAW</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000007TSj8AAG] Google Performance Max General</div>
+                            <div style="color:#adb5bd;font-size:11px;">Google Performance Max General</div>
+                          </td>
+                          <td style="padding:8px 12px;">DM-GPM</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$461.38</td>
+                          <td style="padding:8px 12px;text-align:right;">$461.38</td>
+                          <td style="padding:8px 12px;">One-Time</td>
+                          <td style="padding:8px 12px;">2024-09-01</td>
+                          <td style="padding:8px 12px;">2024-09-30</td>
+                          <td style="padding:8px 12px;">2024-10-01</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+
+                <!-- Second contract (collapsed) -->
+                <div style="border:1px solid var(--o-border);border-radius:4px;margin-bottom:12px;overflow:hidden;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--o-border);">
+                    <span id="ct2-arrow" style="font-size:14px;cursor:pointer;color:#495057;user-select:none;" onclick="toggleContract('ct2')">▸</span>
+                    <span style="font-weight:700;font-size:13px;flex:1;">Builders Supply Co.-S00847</span>
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                      <span style="background:#e65100;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Code: Builders Supply Co.-S00847</span>
+                      <span style="background:#6c757d;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Inactive</span>
+                      <span style="background:#0891b2;color:white;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;">Start: Mar 15, 2022</span>
+                    </div>
+                    <button style="background:var(--o-navbar-bg);color:white;border:none;border-radius:4px;font-size:12px;font-weight:600;padding:5px 14px;cursor:pointer;">View</button>
+                  </div>
+                  <div id="ct2-body" style="overflow-x:auto;display:none;">
+                    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                      <thead>
+                        <tr style="background:#f8f9fa;border-bottom:1px solid var(--o-border);">
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Order No.</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;">Product</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Product Family</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;">Quantity</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;white-space:nowrap;">Unit Price</th>
+                          <th style="text-align:right;padding:7px 12px;font-weight:700;white-space:nowrap;">Sub Total</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Billing Type</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date Start</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date End</th>
+                          <th style="text-align:left;padding:7px 12px;font-weight:700;white-space:nowrap;">Date of Next Invoice</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                          <td style="padding:8px 12px;color:var(--o-link);white-space:nowrap;">a0gQp000002KpM1IAK</td>
+                          <td style="padding:8px 12px;">
+                            <div>[01t3k000005LCHmAAQ] BrandSource Membership</div>
+                            <div style="color:#adb5bd;font-size:11px;">BrandSource Membership</div>
+                          </td>
+                          <td style="padding:8px 12px;">MEM-BS</td>
+                          <td style="padding:8px 12px;text-align:right;">1</td>
+                          <td style="padding:8px 12px;text-align:right;">$1,200.00</td>
+                          <td style="padding:8px 12px;text-align:right;">$1,200.00</td>
+                          <td style="padding:8px 12px;">Annual</td>
+                          <td style="padding:8px 12px;">2022-03-15</td>
+                          <td style="padding:8px 12px;">2023-03-14</td>
+                          <td style="padding:8px 12px;">—</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div style="font-size:11px;color:#6c757d;font-style:italic;padding:4px 2px;">
+                  ℹ️ Subscriptions tab is standard Odoo — shows all sale subscription contracts linked to this account.
+                </div>
+              </div>
+
+              <!-- TAB: NOTES -->
+              <div class="o_tab_content" id="acc-notes">
+                <div style="color:#aaa;font-size:13px;padding:8px 0;">Internal notes...</div>
+              </div>
+
+            </div><!-- /o_notebook -->
+          </div><!-- /o_form_sheet -->
+        </div>
+      </div>
+    </div><!-- /o_form_scroll -->
+
+    <!-- RIGHT: chatter panel -->
+    <div class="o_chatter">
+      <div class="o_chatter_topbar">
+        <button class="o_chat_btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+          Send message
+        </button>
+        <button class="o_chat_btn secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5v14c0 1.1.89 2 2 2h7v-2H5V5h7V3H5c-1.11 0-2 .9-2 2zm16 0v2h-3v2h3v2h-3v2h3v2h-3v2h5V5h-5z"/></svg>
+          Log note
+        </button>
+        <button class="o_chat_btn secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2zM7 11h5v5H7z"/></svg>
+          Activity
+        </button>
+        <div class="o_cp_icon_btns">
+          <button class="o_icon_btn" title="Settings">⚙</button>
+          <button class="o_icon_btn" title="Close">✕</button>
+        </div>
+      </div>
+      <div class="o_chatter_thread">
+        <div class="o_date_separator">Jun 10</div>
+        <div class="o_message">
+          <div class="o_msg_avatar" style="background:#5b7ea3;">A</div>
+          <div class="o_msg_body">
+            <div class="o_msg_header">
+              <span class="o_msg_author">ABV API User</span>
+              <span class="o_msg_date">Jun 10, 12:27 PM</span>
+            </div>
+            <div class="o_msg_content">Contact created</div>
+          </div>
+        </div>
+        <div class="o_message">
+          <div class="o_msg_avatar" style="background:#7b5ea7;">E</div>
+          <div class="o_msg_body">
+            <div class="o_msg_header">
+              <span class="o_msg_author">Evie Pham</span>
+              <span class="o_msg_date">Jun 12, 9:14 AM</span>
+            </div>
+            <div class="o_msg_content">Account Type updated: Prospect → Member. Primary Region set to Atlantic.</div>
+          </div>
+        </div>
+        <div class="o_date_separator">Jun 28</div>
+        <div class="o_message">
+          <div class="o_msg_avatar" style="background:#5b7ea3;">A</div>
+          <div class="o_msg_body">
+            <div class="o_msg_header">
+              <span class="o_msg_author">ABV API User</span>
+              <span class="o_msg_date">Jun 28, 2:30 PM</span>
+            </div>
+            <div class="o_msg_content">Sync completed — 1 Subscription updated from Salesforce.</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /o_chatter -->
+
+  </div><!-- /o_body_row -->
+</div>
+
+<!-- ============================================================
+     CONTACT FORM VIEW
+     ============================================================ -->
+<div class="view-form" id="view-contact">
+  <div class="o_main_navbar">
+    <div class="o_menu_toggle">⊞</div>
+    <span class="o_navbar_app">Account Management</span>
+    <span class="o_navbar_submenu">Accounts <small>▾</small></span>
+    <button class="o_navbar_new_btn">+</button>
+    <div class="o_navbar_search">
+      <button class="o_navbar_filter_pill">All <small>▾</small></button>
+      <div class="search_wrap"><span class="s_icon">🔍</span><input class="o_searchbox" placeholder="Search..."></div>
+    </div>
+    <div class="o_navbar_icons">
+      <div class="o_navbar_icon">💬</div>
+      <div class="o_user_avatar">A</div>
+    </div>
+  </div>
+  <div class="o_control_panel">
+    <button class="o_btn_new">+ New</button>
+    <div class="o_breadcrumb">
+      <button class="o_back_btn">Account Management</button>
+      <span class="o_sep">/</span>
+      <button class="o_back_btn">Don's Appliances</button>
+      <span class="o_sep">/</span>
+      <span class="o_current_page">Don Brown
+        <span class="o_gear_wrap">
+          <span class="o_gear" onclick="toggleGearMenu('con')" title="Actions">⚙</span>
+          <div class="o_gear_menu" id="gearMenu_con">
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Edit Properties</div>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Duplicate</div>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>Archive</div>
+            <hr class="o_gear_divider"/>
+            <div class="o_gear_item danger" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>Delete</div>
+            <hr class="o_gear_divider"/>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Send SMS</div>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Download (vCard)</div>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy Lookup</div>
+            <div class="o_gear_item" onclick="closeGearMenu('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Grant portal access</div>
+          </div>
+        </span>
+        <span class="o_dirty_icons" id="dirtyIcons_con">
+          <button class="o_dirty_btn save" title="Save manually" onclick="saveDirty('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/><path d="M18 2a4 4 0 014 4v11a3 3 0 01-3 3H5a3 3 0 01-3-3V6a4 4 0 014-4"/></svg></button>
+          <button class="o_dirty_btn discard" title="Discard" onclick="discardDirty('con')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </span>
+      </span>
+    </div>
+    <div class="o_pager"><button class="o_pager_btn">‹</button><span>1 / 3</span><button class="o_pager_btn">›</button></div>
+  </div>
+
+  <div class="o_form_scroll">
+    <div class="o_form_view">
+      <div class="o_form_sheet_bg">
+        <div class="design_legend">
+          <strong>Design Spec:</strong>
+          <span><span class="b b-in">IN ODOO</span> z_ field đã có</span>
+          <span><span class="b b-std">STANDARD</span> field Odoo gốc</span>
+          <span><span class="b b-req">REQUIRED</span> bắt buộc</span>
+        </div>
+        <div class="o_form_sheet" style="margin-top:12px;">
+          <div class="o_form_header">
+            <div class="o_avatar_box">
+              <div class="o_avatar_placeholder" style="font-size:36px;background:#0288d122;">D</div>
+            </div>
+            <div class="o_form_header_info">
+              <div class="o_person_company_toggle">
+                <label class="o_radio_item selected"><input type="radio" name="con_type" checked> Person</label>
+                <label class="o_radio_item"><input type="radio" name="con_type"> Company</label>
+                <span class="b b-std">STANDARD</span>
+              </div>
+              <input class="o_company_name" value="Don Brown" placeholder="Contact Name...">
+              <div class="o_contact_inline">
+                <div class="o_contact_line">
+                  <span class="o_icon">🏢</span>
+                  <input value="Don's Appliances" style="color:var(--o-tab-inactive);">
+                  <span class="b b-std">parent_id</span>
+                </div>
+                <div class="o_contact_line">
+                  <span class="o_icon">✉</span>
+                  <input value="don@donsappliances.com">
+                  <span class="b b-std">STANDARD</span>
+                </div>
+                <div class="o_contact_line">
+                  <span class="o_icon">📞</span>
+                  <input value="(412) 555-0192">
+                  <span class="b b-std">STANDARD</span>
+                </div>
+                <div class="o_contact_line">
+                  <span class="o_icon">📱</span>
+                  <input value="(412) 555-0199">
+                  <span class="b b-std">STANDARD</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="o_field_rows">
+            <div class="o_field_row">
+              <div class="o_form_label">Job Title</div>
+              <div class="o_field_value"><input value="Owner"></div>
+              <div class="o_field_badges"><span class="b b-std">STANDARD</span></div>
+            </div>
+            <div class="o_field_row">
+              <div class="o_form_label">AVB Contact ID</div>
+              <div class="o_field_value">AVBC-20091</div>
+              <div class="o_field_badges"><span class="b b-in">IN ODOO</span></div>
+            </div>
+          </div>
+
+          <div class="o_notebook">
+            <div class="nav-tabs">
+              <a class="nav-link active" onclick="showTab('con','general')">General</a>
+              <a class="nav-link" onclick="showTab('con','roles')">Roles &amp; Flags</a>
+              <a class="nav-link" onclick="showTab('con','mailing')">Mailing &amp; Opt-Out</a>
+              <a class="nav-link" onclick="showTab('con','salesforce')">Salesforce</a>
+            </div>
+
+            <!-- General tab content (address) -->
+            <div class="o_tab_content active" id="con-general">
+              <div class="o_horizontal_separator">ADDRESS</div>
+              <div class="o_nb_row"><div class="o_nb_label">Street <span class="b b-std">STANDARD</span></div><div class="o_nb_value"><input value="1200 Perry Highway"></div></div>
+              <div class="o_nb_row"><div class="o_nb_label">City / State <span class="b b-std">STANDARD</span></div><div class="o_nb_value">Pittsburgh, Pennsylvania 15237</div></div>
+              <div class="o_nb_row"><div class="o_nb_label">Country <span class="b b-std">STANDARD</span></div><div class="o_nb_value">United States</div></div>
+            </div>
+
+            <!-- Roles & Flags -->
+            <div class="o_tab_content" id="con-roles">
+              <div class="o_horizontal_separator">CONTACT ROLES</div>
+              <div class="o_nb_grid">
+                <div>
+                  <div class="o_nb_row"><div class="o_nb_label">Contact Role <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><select><option selected>Owner/President</option><option>Buyer</option><option>Finance</option><option>Marketing</option></select></div></div>
+                  <div class="o_nb_row"><div class="o_nb_label">Juston Role <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><select><option>— Select —</option><option>Dealer Admin</option><option>Dealer Viewer</option></select></div></div>
+                </div>
+                <div>
+                  <div class="o_nb_row"><div class="o_nb_label">AVB Primary Contact <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><div class="o_checkbox_row"><input type="checkbox" checked> Yes</div></div></div>
+                  <div class="o_nb_row"><div class="o_nb_label">Marketing DM <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><div class="o_checkbox_row"><input type="checkbox" checked> Yes</div></div></div>
+                  <div class="o_nb_row"><div class="o_nb_label">Primary Marketing DM <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><div class="o_checkbox_row"><input type="checkbox"> No</div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mailing & Opt-Out -->
+            <div class="o_tab_content" id="con-mailing">
+              <div class="o_horizontal_separator">OPT-OUT SETTINGS</div>
+              <div class="o_nb_row"><div class="o_nb_label">Email Blacklisted <span class="b b-std">STANDARD</span></div><div class="o_nb_value"><div class="o_checkbox_row"><input type="checkbox"> Blacklisted</div></div></div>
+              <div class="o_nb_row"><div class="o_nb_label">Opt Out All <span class="b b-in">IN ODOO</span></div><div class="o_nb_value"><div class="o_checkbox_row"><input type="checkbox"> Opt out all mailings</div></div></div>
+              <div class="o_horizontal_separator">MAILING LISTS</div>
+              <div class="o_nb_row"><div class="o_nb_label">Subscriptions <span class="b b-std">STANDARD</span></div>
+                <div class="o_nb_value">
+                  <span class="o_tag_green">YourSource Magazine</span>
+                  <span class="o_tag_green">Member Update</span>
+                  <span class="o_tag">AVB Events</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Salesforce tab for contact -->
+            <div class="o_tab_content" id="con-salesforce">
+              <div class="o_horizontal_separator">IDENTITY</div>
+              <div class="o_nb_grid">
+                <div>
+                  <div class="o_nb_row"><div class="o_nb_label">SF Contact ID <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">003Qp00000XXXXX</div></div>
+                  <div class="o_nb_row"><div class="o_nb_label">SF Object Type <span class="b b-in">IN ODOO</span></div><div class="o_nb_value">Contact</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LIFECYCLE FLOWS VIEW
+     ============================================================ -->
+<div class="view" id="view-flows">
+  <div class="o_main_navbar">
+    <div class="o_menu_toggle">⊞</div>
+    <span class="o_navbar_app">ERP-425</span>
+    <span class="o_navbar_submenu">Account &amp; Contact Lifecycle</span>
+    <div class="o_navbar_search" style="margin-left:auto;margin-right:8px;"></div>
+    <div class="o_navbar_icons"><div class="o_user_avatar">A</div></div>
+  </div>
+  <div style="overflow-y:auto;">
+    <div class="o_flows_wrap">
+      <p class="o_flows_heading">Account &amp; Contact Lifecycle Flows</p>
+      <p class="o_flows_sub">Nhân vật: <strong>Don's Appliances</strong> · Pittsburgh, PA · Atlantic Region</p>
+
+      <div class="flows_legend">
+        <span><span class="fc fc-z">z_field</span> IN ODOO (đã implement)</span>
+        <span><span class="fc fc-x">x_field</span> PLANNED (cần tạo)</span>
+        <span><span class="fc fc-std">field</span> Standard Odoo</span>
+      </div>
+
+      <div class="flows_grid">
+
+        <!-- FLOW 01 -->
+        <div class="flow_card">
+          <div class="flow_card_head" style="background:#1565c0;">
+            <div><div class="fnum">FLOW 01</div><div class="ftitle">Lead → Prospect</div></div>
+            <div class="ficon">🏪</div>
+          </div>
+          <div class="flow_steps">
+            <div class="flow_step">
+              <div class="step_dot" style="background:#1565c0;">1</div>
+              <div class="step_body">
+                <div class="step_title">Nhận Lead / Inbound</div>
+                <div class="step_fields">
+                  <span class="fc fc-std">name</span>
+                  <span class="fc fc-x">x_account_type</span>
+                  <span class="fc fc-x">x_primary_region</span>
+                  <span class="fc fc-x">x_record_type</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#1565c0;">2</div>
+              <div class="step_body">
+                <div class="step_title">Tạo Account (res.partner)</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_sf_account_id</span>
+                  <span class="fc fc-x">x_avb_id</span>
+                  <span class="fc fc-std">phone</span>
+                  <span class="fc fc-std">website</span>
+                  <span class="fc fc-x">x_known_as</span>
+                  <span class="fc fc-x">x_location_type</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#1565c0;">3</div>
+              <div class="step_body">
+                <div class="step_title">Gán Region &amp; Team</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_brandsource_rm_id</span>
+                  <span class="fc fc-x">x_brandsource_mr_id</span>
+                  <span class="fc fc-x">x_solution_engineer_id</span>
+                </div>
+                <div class="auto_note">⚡ <span><strong>Auto-trigger:</strong> Primary Region set → Odoo tự tạo Enrollment Initiatives (Vinh's module)</span></div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#1565c0;">4</div>
+              <div class="step_body">
+                <div class="step_title">Prospect Confirmed ✓</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_ms_active</span>
+                  <span class="fc fc-x">x_satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOW 02 -->
+        <div class="flow_card">
+          <div class="flow_card_head" style="background:#2e7d32;">
+            <div><div class="fnum">FLOW 02</div><div class="ftitle">Account Contact Creation</div></div>
+            <div class="ficon">👤</div>
+          </div>
+          <div class="flow_steps">
+            <div class="flow_step">
+              <div class="step_dot" style="background:#2e7d32;">1</div>
+              <div class="step_body">
+                <div class="step_title">Account đã tồn tại</div>
+                <div class="step_fields">
+                  <span class="fc fc-std">name (company)</span>
+                  <span class="fc fc-x">x_sf_account_id</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#2e7d32;">2</div>
+              <div class="step_body">
+                <div class="step_title">Tạo Contact (is_company=False)</div>
+                <div class="step_fields">
+                  <span class="fc fc-std">name</span>
+                  <span class="fc fc-std">parent_id</span>
+                  <span class="fc fc-z">z_avb_id</span>
+                  <span class="fc fc-std">email</span>
+                  <span class="fc fc-std">phone</span>
+                  <span class="fc fc-std">mobile</span>
+                  <span class="fc fc-std">function</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#2e7d32;">3</div>
+              <div class="step_body">
+                <div class="step_title">Gán Roles &amp; Flags</div>
+                <div class="step_fields">
+                  <span class="fc fc-z">z_avb_primary_contact</span>
+                  <span class="fc fc-z">z_marketing_dm</span>
+                  <span class="fc fc-z">z_primary_marketing_dm</span>
+                  <span class="fc fc-z">z_contact_role</span>
+                  <span class="fc fc-z">z_juston_role</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#2e7d32;">4</div>
+              <div class="step_body">
+                <div class="step_title">Contact Active ✓</div>
+                <div class="step_fields">
+                  <span class="fc fc-std">email_blacklisted</span>
+                  <span class="fc fc-z">z_opt_out_all</span>
+                  <span class="fc fc-std">mailing_ids</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOW 03 -->
+        <div class="flow_card">
+          <div class="flow_card_head" style="background:#e65100;">
+            <div><div class="fnum">FLOW 03</div><div class="ftitle">Prospect → Member</div></div>
+            <div class="ficon">🎉</div>
+          </div>
+          <div class="flow_steps">
+            <div class="flow_step">
+              <div class="step_dot" style="background:#e65100;">1</div>
+              <div class="step_body">
+                <div class="step_title">EI Won / Agreement Signed</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_ms_active</span>
+                  <span class="fc fc-x">x_member_status</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#e65100;">2</div>
+              <div class="step_body">
+                <div class="step_title">Set Membership Fields</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_membership_type</span>
+                  <span class="fc fc-x">x_membership_level</span>
+                  <span class="fc fc-x">x_member_class</span>
+                  <span class="fc fc-x">x_dues_start_date</span>
+                  <span class="fc fc-x">x_ms_active_date</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#e65100;">3</div>
+              <div class="step_body">
+                <div class="step_title">Billing Setup</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_payment_method</span>
+                  <span class="fc fc-x">x_dues_admin_override</span>
+                  <span class="fc fc-std">vat</span>
+                  <span class="fc fc-x">x_payment_due</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#e65100;">4</div>
+              <div class="step_body">
+                <div class="step_title">Member Active ✅</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_category_ids</span>
+                  <span class="fc fc-x">x_satisfaction</span>
+                  <span class="fc fc-x">x_record_type</span>
+                </div>
+                <div class="auto_note">⚡ <span><strong>EI Phase:</strong> ≤89 ngày từ <code>x_ms_active_date</code> → White Glove · >89 ngày → Member Development</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOW 04 -->
+        <div class="flow_card">
+          <div class="flow_card_head" style="background:#6a1b9a;">
+            <div><div class="fnum">FLOW 04</div><div class="ftitle">Volume Reporting</div></div>
+            <div class="ficon">📊</div>
+          </div>
+          <div class="flow_steps">
+            <div class="flow_step">
+              <div class="step_dot" style="background:#6a1b9a;">1</div>
+              <div class="step_body">
+                <div class="step_title">Import Volume Data</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_total_group_volume</span>
+                  <span class="fc fc-x">x_total_retail_volume</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#6a1b9a;">2</div>
+              <div class="step_body">
+                <div class="step_title">By Category (Aggregated)</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_volume_by_category</span>
+                  <span class="fc fc-x">x_volume_appliances</span>
+                  <span class="fc fc-x">x_volume_furniture</span>
+                  <span class="fc fc-x">x_volume_mattresses</span>
+                </div>
+              </div>
+            </div>
+            <div class="flow_step">
+              <div class="step_dot" style="background:#6a1b9a;">3</div>
+              <div class="step_body">
+                <div class="step_title">Reporting Complete ✅</div>
+                <div class="step_fields">
+                  <span class="fc fc-x">x_volume_period</span>
+                  <span class="fc fc-x">x_reporting_date</span>
+                </div>
+                <div class="auto_note">⚡ <span><strong>Auto-calculates</strong> rebate eligibility based on volume thresholds</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /flows_grid -->
+    </div>
+    </div><!-- /view-flows -->
+
+</div><!-- /meta views wrapper -->
+
+<script>
+/* ── Gear dropdown ───────────────────────────── */
+function toggleGearMenu(id) {
+  var menu = document.getElementById('gearMenu_' + id);
+  if (!menu) return;
+  var isOpen = menu.classList.contains('open');
+  // close all menus first
+  document.querySelectorAll('.o_gear_menu.open').forEach(function(m){ m.classList.remove('open'); });
+  if (!isOpen) {
+    menu.classList.add('open');
+    // close on next outside click
+    setTimeout(function(){
+      document.addEventListener('click', function _cl(e){
+        if (!e.target.closest('.o_gear_wrap')) { menu.classList.remove('open'); }
+        document.removeEventListener('click', _cl);
+      });
+    }, 0);
+  }
+}
+function closeGearMenu(id) {
+  var menu = document.getElementById('gearMenu_' + id);
+  if (menu) menu.classList.remove('open');
+}
+
+/* ── Dirty-state icons ───────────────────────── */
+function markDirty(formId) {
+  var icons = document.getElementById('dirtyIcons_' + formId);
+  if (icons) icons.classList.add('show');
+}
+function saveDirty(formId) {
+  var icons = document.getElementById('dirtyIcons_' + formId);
+  if (icons) icons.classList.remove('show');
+}
+function discardDirty(formId) {
+  var icons = document.getElementById('dirtyIcons_' + formId);
+  if (icons) icons.classList.remove('show');
+}
+/* Wire up dirty detection on any input/select/textarea change */
+document.addEventListener('DOMContentLoaded', function() {
+  ['view-account','view-contact'].forEach(function(viewId, idx) {
+    var formId = idx === 0 ? 'acc' : 'con';
+    var container = document.getElementById(viewId);
+    if (!container) return;
+    container.addEventListener('input',  function(e){ if(e.target.closest('.o_form_scroll')) markDirty(formId); });
+    container.addEventListener('change', function(e){ if(e.target.closest('.o_form_scroll')) markDirty(formId); });
+  });
+});
+
+function toggleSection(btn) {
+  var group = btn.closest('.o_form_group') || btn.closest('.o_contacts_group');
+  if (!group) return;
+  var body = group.querySelector('.o_group_body') || group.querySelector('.o_contacts_group_body');
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : '';
+  var arrow = btn.querySelector('.o_toggle_arrow') || btn.querySelector('.o_section_arrow');
+  if (arrow) arrow.textContent = isOpen ? '▸' : '▾';
+}
+function showView(v) {
+  document.querySelectorAll('.view,.view-form,.view-hierarchy').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.meta-topbar button').forEach(function(b){ b.classList.remove('active'); });
+  var viewEl = document.getElementById('view-' + v);
+  var btnEl  = document.getElementById('v-' + v);
+  if (viewEl) viewEl.classList.add('active');
+  if (btnEl)  btnEl.classList.add('active');
+}
+function showTab(form, tab) {
+  var viewId = form === 'acc' ? 'account' : 'contact';
+  document.querySelectorAll('#view-' + viewId + ' .o_tab_content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('#view-' + viewId + ' .nav-link').forEach(function(el){ el.classList.remove('active'); });
+  var el = document.getElementById(form + '-' + tab);
+  if (el) el.classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function toggleHier(coId) {
+  var rows = document.querySelectorAll('.' + coId + '-child');
+  var btn  = document.querySelector('#' + coId + ' .o_expand_btn');
+  var hidden = rows.length > 0 && rows[0].style.display === 'none';
+  rows.forEach(function(r){ r.style.display = hidden ? '' : 'none'; });
+  if (btn) btn.textContent = hidden ? '▾' : '▸';
+}
+
+var _currentStatus = 'prospect';  /* prospect | member | inactive */
+var _selectedFlow = null, _currentStep = 0, _wizData = {};
+
+var WIZ_FLOWS = {
+  /* ── Flow 01: New Account → Prospect ─────────────────────────── */
+  prospect: {
+    label: 'Lead → Prospect', flowNum: 'FLOW 01', color: '#1565C0', icon: '📋',
+    finishStatus: 'prospect',
+    finishLabel: '✓ Create Prospect',
+    steps: [
+      { title: 'Receive Lead / Inbound',
+        fields: [
+          {key:'account_name',    label:'Account Name',    type:'text',   required:true, full:true, placeholder:"e.g. Don's Appliances"},
+          {key:'x_account_type',  label:'Account Type',    type:'select', required:true, options:['Member','Prospect','Other','Do Not Contact']},
+          {key:'x_primary_region',label:'Primary Region',  type:'select', options:['Atlantic','BrandSource','Mid-America','Pacific','Southeast']},
+          {key:'x_record_type',   label:'Record Type',     type:'select', options:['Member','Prospect','Test Account']}
+        ]
+      },
+      { title: 'Create Account',
+        fields: [
+          {key:'x_sf_account_id', label:'Salesforce Account ID', type:'text', placeholder:'e.g. 001Dn000008eXBpIAM'},
+          {key:'x_avb_id',        label:'AVB ID',                type:'text', hint:'Leave blank to auto-assign'},
+          {key:'phone',           label:'Phone',                 type:'text'},
+          {key:'website',         label:'Website',               type:'text'},
+          {key:'x_known_as',      label:'Known As (DBA)',        type:'text'},
+          {key:'x_location_type', label:'Location Type',         type:'select', options:['Chain','Independent','Franchise','Buying Group','Warehouse']}
+        ]
+      },
+      { title: 'Assign Region & Team',
+        autoTrigger: 'Primary Region set → Odoo auto-creates Enrollment Initiatives (Vinh module)',
+        fields: [
+          {key:'x_brandsource_rm_id',    label:'BrandSource RM',       type:'text'},
+          {key:'x_brandsource_mr_id',    label:'BrandSource MR',       type:'text'},
+          {key:'x_solution_engineer_id', label:'Solution Engineer',    type:'text'},
+          {key:'x_ms_active',            label:'Member Services Active',type:'checkbox'},
+          {key:'x_satisfaction',         label:'Satisfaction Level',   type:'select', options:['🟢 Green','🟡 Yellow','🔴 Red']}
+        ]
+      },
+      { title: 'Prospect Confirmed ✓',
+        fields: [],
+        review: true
+      }
+    ]
+  },
+
+  /* ── Flow 02: Add Contact to existing Account ─────────────────── */
+  contact: {
+    label: 'Account Contact Creation', flowNum: 'FLOW 02', color: '#2E7D32', icon: '👤',
+    finishStatus: null,
+    finishLabel: '✓ Save Contact',
+    steps: [
+      { title: 'Select Existing Account',
+        fields: [
+          {key:'name_company',   label:'Company Name',        type:'text', required:true, full:true},
+          {key:'x_sf_account_id',label:'Salesforce Account ID',type:'text'}
+        ]
+      },
+      { title: 'Create Contact',
+        fields: [
+          {key:'contact_name',label:'Contact Name', type:'text',  required:true},
+          {key:'parent_id',   label:'Company',      type:'text'},
+          {key:'z_avb_id',    label:'AVB ID',        type:'text'},
+          {key:'email',       label:'Email',         type:'email'},
+          {key:'phone_c',     label:'Phone',         type:'text'},
+          {key:'mobile',      label:'Mobile',        type:'text'},
+          {key:'function',    label:'Job Position',  type:'text'}
+        ]
+      },
+      { title: 'Assign Roles & Flags',
+        fields: [
+          {key:'z_avb_primary_contact', label:'AVB Primary Contact',    type:'checkbox'},
+          {key:'z_marketing_dm',         label:'Marketing DM',           type:'checkbox'},
+          {key:'z_primary_marketing_dm', label:'Primary Marketing DM',  type:'checkbox'},
+          {key:'z_contact_role',         label:'Contact Role',           type:'text'},
+          {key:'z_juston_role',          label:'Juston Role',            type:'text'}
+        ]
+      },
+      { title: 'Contact Active ✓',
+        fields: [
+          {key:'email_blacklisted',label:'Email Blacklisted', type:'checkbox'},
+          {key:'z_opt_out_all',    label:'Opt Out All',        type:'checkbox'},
+          {key:'mailing_ids',      label:'Mailing Lists',      type:'text'}
+        ]
+      }
+    ]
+  },
+
+  /* ── Flow 03: Prospect → Member ───────────────────────────────── */
+  member: {
+    label: 'Prospect → Member', flowNum: 'FLOW 03', color: '#E65100', icon: '🎉',
+    finishStatus: 'member',
+    finishLabel: '✓ Convert to Member',
+    steps: [
+      { title: 'EI Won / Agreement Signed',
+        fields: [
+          {key:'x_ms_active',    label:'Member Services Active', type:'checkbox'},
+          {key:'x_member_status',label:'Member Status',          type:'select', options:['Active','Inactive','Pending']}
+        ]
+      },
+      { title: 'Set Membership Fields',
+        fields: [
+          {key:'x_membership_type',  label:'Membership Type',  type:'select', options:['Full Member','Associate','Affiliate','Buying Group']},
+          {key:'x_membership_level', label:'Membership Level', type:'select', options:['Gold','Silver','Bronze','Standard']},
+          {key:'x_member_class',     label:'Member Class',     type:'select', options:['Primary','Secondary','Satellite']},
+          {key:'x_dues_start_date',  label:'Dues Start Date',  type:'date'},
+          {key:'x_billing_type',     label:'Billing Type',     type:'select', options:['Annual','Quarterly','Monthly']}
+        ]
+      },
+      { title: 'Assign Sales Team',
+        fields: [
+          {key:'x_brandsource_rm_id',label:'BrandSource RM',  type:'text'},
+          {key:'x_brandsource_mr_id',label:'BrandSource MR',  type:'text'},
+          {key:'x_member_channel',   label:'Member Channel',  type:'select', options:['Retail','Builder','Commercial']}
+        ]
+      },
+      { title: 'Member Confirmed ✓',
+        fields: [],
+        review: true
+      }
+    ]
+  },
+
+  /* ── Flow 04: Volume Reporting ────────────────────────────────── */
+  volume: {
+    label: 'Volume Reporting', flowNum: 'FLOW 04', color: '#6A1B9A', icon: '📊',
+    finishStatus: null,
+    finishLabel: '✓ Submit Volume',
+    steps: [
+      { title: 'Import Volume Data',
+        fields: [
+          {key:'x_total_group_volume', label:'Total Group Volume',  type:'text'},
+          {key:'x_total_retail_volume',label:'Total Retail Volume', type:'text'}
+        ]
+      },
+      { title: 'By Category (Aggregated)',
+        fields: [
+          {key:'x_volume_by_category',label:'Volume by Category', type:'text'},
+          {key:'x_volume_appliances', label:'Appliances Volume',  type:'text'},
+          {key:'x_volume_furniture',  label:'Furniture Volume',   type:'text'}
+        ]
+      },
+      { title: 'By Brand',
+        fields: [
+          {key:'x_volume_by_brand',label:'Volume by Brand', type:'text'},
+          {key:'x_volume_ge',      label:'GE Volume',       type:'text'},
+          {key:'x_volume_lg',      label:'LG Volume',       type:'text'}
+        ]
+      },
+      { title: 'Review & Submit', review: true }
+    ]
+  },
+
+  /* ── Flow: Deactivate → Inactive ──────────────────────────────── */
+  inactive: {
+    label: 'Deactivate Account', flowNum: 'FLOW', color: '#546E7A', icon: '🔒',
+    finishStatus: 'inactive',
+    finishLabel: '✓ Deactivate',
+    steps: [
+      { title: 'Confirm Deactivation',
+        fields: [
+          {key:'deactivation_reason',label:'Deactivation Reason', type:'select', options:['Member request','Non-payment','Business closed','Duplicate account']},
+          {key:'deactivation_date',  label:'Effective Date',      type:'date'}
+        ]
+      },
+      { title: 'Final Review', review: true }
+    ]
+  },
+
+  /* ── Flow: Reactivate → Prospect ─────────────────────────────── */
+  reactivate: {
+    label: 'Reactivate Account', flowNum: 'FLOW', color: '#00695C', icon: '♻️',
+    finishStatus: 'prospect',
+    finishLabel: '✓ Reactivate',
+    steps: [
+      { title: 'Reactivation Details',
+        fields: [
+          {key:'reactivation_reason',label:'Reactivation Reason', type:'select', options:['Renewed interest','New agreement','Prior member rejoining']},
+          {key:'reactivation_date',  label:'Effective Date',       type:'date'}
+        ]
+      },
+      { title: 'Restore Membership',
+        fields: [
+          {key:'x_ms_active',       label:'Member Services Active', type:'checkbox'},
+          {key:'x_membership_type', label:'Membership Type',        type:'select', options:['Full Member','Associate','Affiliate']}
+        ]
+      },
+      { title: 'Review & Confirm', review: true }
+    ]
+  }
+};
+
+
+function _launchFlow(key){
+  _selectedFlow=key; _currentStep=0; _wizData={};
+  document.getElementById('wizSelectScreen').style.display='none';
+  document.getElementById('wizStepScreen').style.display='';
+  document.getElementById('flowWizard').classList.add('open');
+  renderWizStep();
+}
+/* New button → always starts Prospect creation flow */
+function openWizard(){ _launchFlow('prospect'); }
+/* Status bar / other triggers → specific flow */
+function openWizardFlow(key){ _launchFlow(key); }
+function closeWizard(){ document.getElementById('flowWizard').classList.remove('open'); }
+/* Legacy select-screen helpers (kept for compat) */
+function selectFlow(card,flowKey){
+  document.querySelectorAll('.o_flow_card').forEach(function(c){c.classList.remove('selected');});
+  card.classList.add('selected'); _selectedFlow=flowKey;
+  var btn=document.getElementById('wizardStartBtn');
+  if(btn) btn.classList.add('ready');
+}
+function startFlow(){
+  if(!_selectedFlow) return;
+  _currentStep=0; _wizData={};
+  document.getElementById('wizSelectScreen').style.display='none';
+  document.getElementById('wizStepScreen').style.display='';
+  renderWizStep();
+}
+function wizChangeFlow(){
+  saveStepData();
+  document.getElementById('wizStepScreen').style.display='none';
+  document.getElementById('wizSelectScreen').style.display='';
+  _selectedFlow=null;
+}
+/* Update pipeline bar visual after flow finishes */
+function updateStatusBar(newStatus){
+  if(!newStatus) return;
+  _currentStatus=newStatus;
+  var states=['prospect','member','inactive'];
+  var labels={'prospect':'Prospect','member':'Member','inactive':'Inactive'};
+  var flows={'prospect':null,'member':'member','inactive':'inactive'};
+  if(newStatus==='inactive') flows['prospect']='reactivate';
+  var activeIdx=states.indexOf(newStatus);
+  var pipeline=document.getElementById('accountPipeline');
+  if(!pipeline) return;
+  var html='';
+  states.forEach(function(s,i){
+    var cls='o_pipe_item';
+    if(i<activeIdx) cls+=' done';
+    else if(i===activeIdx) cls+=' active';
+    var fk=flows[s];
+    if(fk){
+      html+='<button class="'+cls+'" onclick="openWizardFlow(\''+fk+'\')">'+labels[s]+'</button>';
+    } else {
+      html+='<span class="'+cls+'">'+labels[s]+'</span>';
+    }
+  });
+  pipeline.innerHTML=html;
+}
+
+function wizPrev(){ saveStepData(); if(_currentStep>0){_currentStep--; renderWizStep();} }
+function wizNext(){
+  if(!validateStep()) return;
+  saveStepData();
+  var flow=WIZ_FLOWS[_selectedFlow];
+  if(_currentStep<flow.steps.length-1){_currentStep++; renderWizStep();}
+}
+function wizFinish(){
+  saveStepData(); closeWizard(); showView('account');
+  var nameEl=document.querySelector('.o_company_name');
+  if(nameEl&&_wizData.account_name) nameEl.textContent=_wizData.account_name;
+  var flow=WIZ_FLOWS[_selectedFlow];
+  if(flow&&flow.finishStatus) updateStatusBar(flow.finishStatus);
+}
+function saveStepData(){
+  var step=WIZ_FLOWS[_selectedFlow]&&WIZ_FLOWS[_selectedFlow].steps[_currentStep];
+  if(!step||step.review) return;
+  (step.fields||[]).forEach(function(f){
+    var el=document.getElementById('wizf_'+f.key);
+    if(el) _wizData[f.key]=f.type==='checkbox'?el.checked:el.value;
+  });
+}
+function validateStep(){
+  var step=WIZ_FLOWS[_selectedFlow]&&WIZ_FLOWS[_selectedFlow].steps[_currentStep];
+  if(!step||step.review) return true;
+  var ok=true;
+  (step.fields||[]).forEach(function(f){
+    if(!f.required) return;
+    var el=document.getElementById('wizf_'+f.key);
+    if(el){ var empty=!el.value.trim(); el.style.borderColor=empty?'#e53935':''; if(empty) ok=false; }
+  });
+  return ok;
+}
+function renderWizStep(){
+  var flow=WIZ_FLOWS[_selectedFlow]; if(!flow) return;
+  var step=flow.steps[_currentStep];
+  var color=flow.color, total=flow.steps.length, isLast=_currentStep===total-1;
+
+  /* Header */
+  var hdr=document.getElementById('wizStepHdr');
+  if(hdr){
+    hdr.style.background=color;
+    hdr.innerHTML='<h2>'+flow.icon+' '+flow.label+'</h2>'
+                 +'<p>Step '+(_currentStep+1)+' of '+total+' — '+step.title+'</p>';
+  }
+
+  /* Progress */
+  var prog='';
+  flow.steps.forEach(function(s,i){
+    var cls=i<_currentStep?'done':(i===_currentStep?'active':'');
+    prog+='<div class="o_wiz_prog_step '+cls+'" style="--step-color:'+color+'">'
+        +'<div class="o_wiz_prog_circle">'+(i<_currentStep?'✓':(i+1))+'</div>'
+        +'<span class="o_wiz_prog_label">'+s.title+'</span></div>';
+    if(i<total-1) prog+='<div class="o_wiz_prog_line'+(i<_currentStep?' done':'')+'"></div>';
+  });
+  document.getElementById('wizProgress').innerHTML=prog;
+
+  /* Body */
+  var body='';
+  if(step.review){
+    body='<div class="o_wiz_review">';
+    flow.steps.forEach(function(s){
+      if(s.review) return;
+      body+='<div class="o_wiz_review_section"><h4>'+s.title+'</h4><div class="o_wiz_review_grid">';
+      (s.fields||[]).forEach(function(f){
+        var val=_wizData[f.key];
+        body+='<div class="o_wiz_review_row"><span class="o_wiz_review_label">'+f.label+'</span>'
+            +(val?'<span class="o_wiz_review_val">'+val+'</span>':'<span class="o_wiz_review_empty">—</span>')
+            +'</div>';
+      });
+      body+='</div></div>';
+    });
+    body+='</div>';
+  } else {
+    var hasTwo=(step.fields||[]).some(function(f){return !f.full;});
+    body='<div class="o_wiz_form_grid'+(hasTwo?'':' single')+'">';
+    (step.fields||[]).forEach(function(f){
+      var val=_wizData[f.key]||'';
+      var cls='o_wiz_field'+(f.full?' full':'');
+      var inp='';
+      if(f.type==='checkbox'){
+        inp='<label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer;">'
+           +'<input id="wizf_'+f.key+'" type="checkbox"'+(val?' checked':'')+' style="width:auto;">'
+           +'<span>Enable</span></label>';
+      } else if(f.type==='select'){
+        inp='<select id="wizf_'+f.key+'">'
+           +(!f.required?'<option value="">— Select —</option>':'')
+           +(f.options||[]).map(function(o){return '<option'+(val===o?' selected':'')+'>'+o+'</option>';}).join('')
+           +'</select>';
+      } else {
+        inp='<input id="wizf_'+f.key+'" type="'+(f.type||'text')+'" placeholder="'+(f.placeholder||'')+'" value="'+val+'" style="width:100%;box-sizing:border-box;">';
+      }
+      var hint=f.hint?'<div class="o_wiz_hint">'+f.hint+'</div>':'';
+      body+='<div class="'+cls+'"><label>'+f.label+(f.required?'<span class="req">*</span>':'')+'</label>'+inp+hint+'</div>';
+    });
+    body+='</div>';
+    if(step.autoTrigger){
+      body+='<div style="margin:12px 0 0;padding:8px 12px;background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;font-size:12px;color:#92400e;display:flex;gap:6px;">'
+           +'<span>⚡</span><div><strong>Auto-trigger:</strong> '+step.autoTrigger+'</div></div>';
+    }
+  }
+  document.getElementById('wizStepBody').innerHTML=body;
+
+  /* Footer */
+  document.getElementById('wizPrevBtn').style.display=_currentStep>0?'':'none';
+  var nxt=document.getElementById('wizNextBtn');
+  var fin=document.getElementById('wizFinBtn');
+  if(isLast){
+    nxt.style.display='none'; fin.style.display='';
+    fin.textContent=flow.finishLabel||'✓ Finish';
+  } else { nxt.style.display=''; fin.style.display='none'; }
+}
+
+function wizFetchSF(){
+  var el=document.getElementById('wizf_sf_account_id');
+  if(!el||!el.value.trim()){if(el)el.style.borderColor='#e53935';return;}
+  el.style.borderColor='#198754'; el.style.background='#f0faf4';
+  _wizData.sf_account_id=el.value.trim();
+  _wizData.account_name="Don's Appliances"; _wizData.account_type='Member';
+  _wizData.primary_region='Atlantic'; _wizData.avb_id='9STOR';
+  _wizData.street='3575 William Penn Hwy, Pittsburgh PA 15235';
+  setTimeout(function(){wizNext();},600);
+}
+function hexToRgba(hex,alpha){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+alpha+')';
+}
+
+function toggleContract(id) {
+  var body  = document.getElementById(id + '-body');
+  var arrow = document.getElementById(id + '-arrow');
+  if (!body) return;
+  var collapsed = body.style.display === 'none';
+  body.style.display  = collapsed ? '' : 'none';
+  if (arrow) arrow.textContent = collapsed ? '▼' : '▸';
+}
+document.getElementById('flowWizard').addEventListener('click',function(e){if(e.target===this)closeWizard();});
+/* Init status bar to match _currentStatus */
+updateStatusBar(_currentStatus);
+</script>
+</body>
+</html>
